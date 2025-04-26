@@ -9,7 +9,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { FaFacebook } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import LogoH3 from '@/public/images/logo-h3.png';
-import { login, getUserInfo } from '@/lib/api';
+import { login, getUserInfo } from '../api/authApi';
 import { useDispatch } from 'react-redux';
 import { setUser, setIsLoggedIn } from '@/lib/authReducer';
 import { LoginData } from '@/types/auth';

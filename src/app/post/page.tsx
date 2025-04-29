@@ -2,62 +2,46 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import { parse, isValid } from 'date-fns';
+import { getPosts } from '@/api/postApi';
+import type { Post } from '@/types/post';
 
 const topics = ['Front-end / Mobile apps', 'Back-end / Devops', 'UI / UX / Design', 'Others'];
 
-const getAllPost = async () => {
-  try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/posts`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-    });
-    if (!response.ok) {
-      throw new Error('Lỗi khi lấy bài viết');
-    }
-    return await response.json();
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
-
 export default function Post() {
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null); // Sửa kiểu dữ liệu cho error
-  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
 
   const fetchPosts = async () => {
     try {
-      const response = await getAllPost();
-      if (Array.isArray(response.data) && response.data.length > 0) {
-        setPosts(response.data);
-      } else {
-        setError('Không có bài viết nào.');
-      }
-    } catch (error: any) { // Thêm kiểu any cho error hoặc định nghĩa kiểu cụ thể
+      const posts = await getPosts();
+      console.log('Posts fetched:', posts);
+      setPosts(posts);
+    } catch (error) {
       console.error('Lỗi khi lấy bài viết:', error);
-      setError(`Có lỗi xảy ra khi tải bài viết: ${error.message}`);
+      setError(`Có lỗi xảy ra khi tải bài viết: ${(error as Error).message}`);
     } finally {
       setLoading(false);
     }
   };
 
-  const isValidDate = (date: string) => {
-    const parsedDate = new Date(date);
-    return !isNaN(parsedDate.getTime());
+  const formatDate = (date?: string) => {
+    if (!date) return 'Không rõ thời gian';
+    const parsedDate = parse(date, 'dd-MM-yyyy HH:mm:ss', new Date());
+    return isValid(parsedDate) ? parsedDate.toLocaleDateString('vi-VN') : 'Không rõ thời gian';
   };
 
   useEffect(() => {
+    console.log('Fetching posts...');
     fetchPosts();
   }, []);
 
   return (
     <div className="w-full lg:h-auto h-full flex flex-col items-center justify-center py-20 bg-gray-50 dark:bg-gray-900 md:pl-4">
       <div className="max-w-6xl mx-auto p-2">
-        {/* Sidebar trên Mobile */}
         <div className="md:hidden mb-4">
           <div className="bg-white shadow-md p-4 rounded-lg">
             <h4 className="font-semibold mb-4">XEM CÁC BÀI VIẾT THEO CHỦ ĐỀ</h4>
@@ -82,56 +66,66 @@ export default function Post() {
           <p className="text-red-500">{error}</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-            {/* Danh sách bài viết (Chiếm 2 cột) */}
             <div className="md:col-span-2 space-y-6">
               {posts.length > 0 ? (
-                posts.map((post: any) => (
-                  <Link key={post.id} href={`/post/${post.id}`} passHref>
-                    <div className="p-4 border rounded-lg shadow-sm flex flex-col gap-4 cursor-pointer">
-                      {/* Hàng chứa ảnh tác giả + tên */}
-                      <div className="flex items-center gap-3">
-                        <Image
-                          src={post.user?.profileImage || '/default-avatar.jpg'}
-                          alt="Avatar"
-                          width={40}
-                          height={40}
-                          className="w-10 h-10 rounded-full object-cover"
-                        />
-                        <p className="font-semibold dark:text-gray-200">{post.user?.fullName || 'Ẩn danh'}</p>
-                      </div>
-
-                      <div className="flex gap-4 items-start">
-                        <div className="flex-1 flex flex-col gap-2">
-                          <h3 className="font-bold text-lg dark:text-gray-200">{post.title}</h3>
-                          <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">{post.content}</p>
+                posts.map((post) => {
+                  console.log('Rendering post:', post);
+                  console.log('Post created at:', post.CreatedAt);
+                  // Tách chuỗi Tags thành mảng
+                  const tags = post.Tags && post.Tags.trim() !== '' ? post.Tags.split(',').map(tag => tag.trim()) : [];
+                  return (
+                    <Link key={post.Id} href={`/post/${post.Id}`} passHref>
+                      <div className="p-4 border rounded-lg shadow-sm flex flex-col gap-4 cursor-pointer">
+                        <div className="flex items-center gap-3">
+                          <Image
+                            src="/default-avatar.jpg"
+                            alt="Avatar"
+                            width={40}
+                            height={40}
+                            className="w-10 h-10 rounded-full object-cover"
+                          />
+                          <p className="font-semibold dark:text-gray-200">Ẩn danh</p>
                         </div>
 
-                        <Image
-                          src={`${process.env.NEXT_PUBLIC_API_URL}/${post.urlImage}`}
-                          alt="Ảnh bài viết"
-                          width={200}
-                          height={112}
-                          className="w-[200px] h-[20px] md:w-40 md:h-28 rounded-lg object-cover"
-                        />
+                        <div className="flex gap-4 items-start">
+                          <div className="flex-1 flex flex-col gap-2">
+                            <h3 className="font-bold text-lg dark:text-gray-200">{post.Title}</h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">{post.Content}</p>
+                          </div>
+
+                          <Image
+                            src={
+                              post.UrlImage && typeof post.UrlImage === 'string'
+                                ? post.UrlImage.startsWith('http')
+                                  ? post.UrlImage
+                                  : `${process.env.NEXT_PUBLIC_API_URL}/${post.UrlImage}`
+                                : '/default-post-image.jpg'
+                            }
+                            alt="Ảnh bài viết"
+                            width={200}
+                            height={112}
+                            className="w-[200px] h-[112px] md:w-40 md:h-28 rounded-lg object-cover"
+                          />
+                        </div>
+                        <div className="flex justify-start items-center text-xs text-gray-500 gap-x-2">
+                          {tags.length > 0 &&
+                            tags.map((tag, index) => (
+                              <span
+                                key={index}
+                                className="border border-blue-600 text-blue-600 text-xs font-semibold px-3 rounded-full 
+                                           transition duration-300 hover:bg-blue-600 hover:text-white cursor-pointer flex-shrink-0"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          <p className="text-gray-500 dark:text-gray-400 text-sm">
+                            {formatDate(post.CreatedAt)}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex justify-start items-center text-xs text-gray-500 gap-x-2">
-                        {post.tags && post.tags.trim() !== '' && (
-                          <span
-                            className="border border-blue-600 text-blue-600 text-xs font-semibold px-3 rounded-full 
-                               transition duration-300 hover:bg-blue-600 hover:text-white cursor-pointer flex-shrink-0"
-                          >
-                            {post.tags.trim()}
-                          </span>
-                        )}
-                        <p className="text-gray-500 dark:text-gray-400 text-sm">
-                          {isValidDate(post.createdAt)
-                            ? new Date(post.createdAt).toLocaleDateString()
-                            : 'Không rõ thời gian'}
-                        </p>
-                      </div>
-                    </div>
-                  </Link>
-                ))
+                    </Link>
+                  );
+                })
               ) : (
                 <p className="text-gray-500 dark:text-gray-400">Không có bài viết nào.</p>
               )}

@@ -135,7 +135,6 @@ export default async function CourseListPage() {
 
   return (
     <div className="w-full">
-      <h2 className="text-3xl font-bold  mb-6">Khóa học nổi bật</h2>
       <div className="flex flex-wrap justify-start gap-4">
         {courses.map((course) => (
           <CourseCard key={course.id} course={course} />

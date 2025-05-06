@@ -1,6 +1,6 @@
-import CourseListPage from "./courses/page";
+import CoursesPage from "./courses/page";
 import BannerPage from "./banner/page";
-import CardPost from "./post/CardPost";
+import CardPost from "./post/cardPost";
 
 export default function Home() {
   return (
@@ -13,7 +13,7 @@ export default function Home() {
       {/* Khóa học nổi bật */}
       <section className="w-full mt-12">
         <h2 className="text-3xl font-bold text-gray-800 mb-6">Khóa học nổi bật</h2>
-        <CourseListPage />
+        <CoursesPage />
       </section>
 
       {/* Bài viết nổi bật */}

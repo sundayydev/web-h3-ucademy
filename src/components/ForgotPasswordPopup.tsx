@@ -61,7 +61,9 @@ const ForgotPasswordPopup: React.FC<ForgotPasswordPopupProps> = ({
             }}
           />
         </div>
-        <h3 className="text-center text-lg font-bold text-gray-700 mb-3">Quên Mật Khẩu</h3>
+        <h3 className="text-center text-lg font-bold text-gray-700 mb-3">
+          Quên Mật Khẩu
+        </h3>
         <div className="relative mb-3">
           <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <input

@@ -1,3 +1,4 @@
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { jwtDecode } from 'jwt-decode';
 
@@ -173,3 +174,20 @@ export const uploadImage = async (id: string, urlImage: File): Promise<any> => {
     throw error;
   }
 };
+
+export async function getCoursePaginated(pageNumber: number, pageSize: number) {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/course/paginated?pageNumber=${pageNumber}&pageSize=${pageSize}`,
+    {
+      cache: 'no-store',
+    }
+  );
+  if (!res.ok) {
+    throw new Error('Không thể lấy thông tin khóa học');
+  }
+
+  const data = await res.json();
+  console.log('data', data);
+  return data;
+}
+

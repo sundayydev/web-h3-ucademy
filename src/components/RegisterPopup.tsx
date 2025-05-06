@@ -45,8 +45,9 @@ export default function RegisterPopup({
         toast.success('Đăng ký thành công, bạn đã được đăng nhập!');
         onClose();
       }
-    }  catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Đăng nhập thất bại';
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Đăng nhập thất bại';
       toast.error(errorMessage);
     }
   };
@@ -57,7 +58,13 @@ export default function RegisterPopup({
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white shadow-lg rounded-lg p-6 w-full mx-4 md:max-w-xl max-w-sm relative h-[500px] md:h-[550px]">
         <div className="flex justify-center mb-4 mt-4">
-          <Image src={LogoH3} alt="Logo H3" className="h-10 rounded-lg" width={40} height={40} />
+          <Image
+            src={LogoH3}
+            alt="Logo H3"
+            className="h-10 rounded-lg"
+            width={40}
+            height={40}
+          />
         </div>
         <button
           className="absolute top-2 right-2 text-gray-600 hover:text-red-500"
@@ -76,7 +83,9 @@ export default function RegisterPopup({
               type="text"
               placeholder="Nhập họ và tên"
               value={registerData.fullName}
-              onChange={(e) => setRegisterData({ ...registerData, fullName: e.target.value })}
+              onChange={(e) =>
+                setRegisterData({ ...registerData, fullName: e.target.value })
+              }
               className="w-full px-9 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 text-sm md:text-base"
               aria-label="Họ và tên"
             />
@@ -87,7 +96,9 @@ export default function RegisterPopup({
               type="email"
               placeholder="Email"
               value={registerData.email}
-              onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
+              onChange={(e) =>
+                setRegisterData({ ...registerData, email: e.target.value })
+              }
               className="w-full px-9 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 text-sm md:text-base"
               aria-label="Email"
             />
@@ -98,7 +109,9 @@ export default function RegisterPopup({
               type={showPassword ? 'text' : 'password'}
               placeholder="Mật khẩu"
               value={registerData.password}
-              onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
+              onChange={(e) =>
+                setRegisterData({ ...registerData, password: e.target.value })
+              }
               className="w-full px-9 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 text-sm md:text-base"
               aria-label="Mật khẩu"
             />
@@ -117,7 +130,9 @@ export default function RegisterPopup({
           >
             Đăng Ký
           </Button>
-          <div className="my-3 text-center text-gray-500 text-xs md:text-sm">HOẶC</div>
+          <div className="my-3 text-center text-gray-500 text-xs md:text-sm">
+            HOẶC
+          </div>
           <div className="flex flex-col gap-2">
             <button className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold rounded-lg py-2 flex items-center justify-center text-sm md:text-base">
               <FcGoogle className="w-5 h-5 mr-2" />
@@ -129,7 +144,9 @@ export default function RegisterPopup({
             </button>
           </div>
           <div className="mt-3 text-center mb-3">
-            <span className="text-gray-600 text-xs md:text-sm">Đã có tài khoản?</span>
+            <span className="text-gray-600 text-xs md:text-sm">
+              Đã có tài khoản?
+            </span>
             <button
               className="text-blue-500 hover:text-green-500 text-xs md:text-sm ml-1"
               onClick={onOpenLogin}

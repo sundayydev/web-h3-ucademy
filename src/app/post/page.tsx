@@ -70,12 +70,12 @@ export default function Post() {
               {posts.length > 0 ? (
                 posts.map((post) => {
                   console.log('Rendering post:', post);
-                  console.log('Post created at:', post.CreatedAt);
+                  console.log('Post created at:', post.createdAt);
                   // Tách chuỗi Tags thành mảng
-                  const tags = post.Tags && post.Tags.trim() !== '' ? post.Tags.split(',').map(tag => tag.trim()) : [];
+                  const tags = post.tags && post.tags.trim() !== '' ? post.tags.split(',').map(tag => tag.trim()) : [];
                   return (
-                    <Link key={post.Id} href={`/post/${post.Id}`} passHref>
-                      <div className="p-4 border rounded-lg shadow-sm flex flex-col gap-4 cursor-pointer">
+                    <Link key={post.id} href={`/post/${post.id}`} passHref>
+                      <div className="p-4 border rounded-lg shadow-sm flex flex-col gap-4 cursor-pointer mt-5">
                         <div className="flex items-center gap-3">
                           <Image
                             src="/default-avatar.jpg"
@@ -89,16 +89,16 @@ export default function Post() {
 
                         <div className="flex gap-4 items-start">
                           <div className="flex-1 flex flex-col gap-2">
-                            <h3 className="font-bold text-lg dark:text-gray-200">{post.Title}</h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">{post.Content}</p>
+                            <h3 className="font-bold text-lg dark:text-gray-200">{post.title}</h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">{post.content}</p>
                           </div>
 
                           <Image
                             src={
-                              post.UrlImage && typeof post.UrlImage === 'string'
-                                ? post.UrlImage.startsWith('http')
-                                  ? post.UrlImage
-                                  : `${process.env.NEXT_PUBLIC_API_URL}/${post.UrlImage}`
+                              post.urlImage && typeof post.urlImage === 'string'
+                                ? post.urlImage.startsWith('http')
+                                  ? post.urlImage
+                                  : `${process.env.NEXT_PUBLIC_API_URL}/${post.urlImage}`
                                 : '/default-post-image.jpg'
                             }
                             alt="Ảnh bài viết"
@@ -119,7 +119,7 @@ export default function Post() {
                               </span>
                             ))}
                           <p className="text-gray-500 dark:text-gray-400 text-sm">
-                            {formatDate(post.CreatedAt)}
+                            {formatDate(post.createdAt)}
                           </p>
                         </div>
                       </div>

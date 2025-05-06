@@ -1,11 +1,11 @@
 export interface Post {
-  Id: string;
-  UserId: string;
-  Title: string;
-  Content: string;
-  Tags: string;
-  UrlImage?: string;
-  CreatedAt?: string;
+  id: string;
+  userId: string;
+  title: string;
+  content: string;
+  tags: string;
+  urlImage?: string;
+  createdAt?: string;
   user: {
     fullName: string;
     profileImage?: string;

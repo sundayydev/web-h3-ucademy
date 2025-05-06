@@ -47,16 +47,16 @@ const CardPost = () => {
   
       <div className="flex flex-wrap justify-start gap-4">
         {posts.map((post) => {
-          const tags = post.Tags?.trim() ? post.Tags.split(',').map(tag => tag.trim()) : [];
+          const tags = post.tags?.trim() ? post.tags.split(',').map(tag => tag.trim()) : [];
           return (
-            <Link key={post.Id} href={`/post/${post.Id}`} passHref>
+            <Link key={post.id} href={`/post/${post.id}`} passHref>
               <div
                 className="rounded-2xl shadow-lg overflow-hidden bg-white w-full md:w-1/3 lg:w-[275px] 
                            transform transition-transform duration-300 hover:scale-105 flex flex-col cursor-pointer"
               >
                 <div className="flex-grow">
                  <Image
-                  src={getFullImageUrl(post.UrlImage)}
+                  src={getFullImageUrl(post.urlImage)}
                   alt="Ảnh bài viết"
                   width={275}
                   height={160}
@@ -65,7 +65,7 @@ const CardPost = () => {
 
                 </div>
                 <div className="bg-gray-50 text-black p-4">
-                  <h3 className="text-lg font-semibold mb-2">{post.Title}</h3>
+                  <h3 className="text-lg font-semibold mb-2">{post.title}</h3>
                   <div className="flex flex-wrap gap-2 mb-2">
                     {tags.map((tag, index) => (
                       <span
@@ -92,7 +92,7 @@ const CardPost = () => {
                       />
                       <p className="font-semibold text-sm">{post.user?.fullName || 'Ẩn danh'}</p>
                     </div>
-                    <p>{formatDate(post.CreatedAt)}</p>
+                    <p>{formatDate(post.createdAt)}</p>
                   </div>
                 </div>
               </div>

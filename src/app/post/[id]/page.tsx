@@ -26,7 +26,7 @@ const PostDetails = async ({ params }: Props) => {
 
   return (
     <div className="w-full py-20 bg-gray-50 dark:bg-gray-900 px-6 md:px-20">
-      <h1 className="text-3xl font-bold mb-6">{post.Title}</h1>
+      <h1 className="text-3xl font-bold mb-6">{post.title}</h1>
 
       {/* Author */}
       <div className="flex items-center space-x-4 mb-6">
@@ -43,15 +43,15 @@ const PostDetails = async ({ params }: Props) => {
         />
         <div>
           <p className="font-semibold">{post.user?.fullName || 'Tác giả ẩn danh'}</p>
-          <p className="text-gray-500 text-sm">{formatDate(post.CreatedAt)}</p>
+          <p className="text-gray-500 text-sm">{formatDate(post.createdAt)}</p>
         </div>
       </div>
 
       {/* Main Image */}
-      {post.UrlImage ? (
+      {post.urlImage ? (
   <Image
-    src={new URL(post.UrlImage, baseUrl).toString()}
-    alt={post.Title}
+    src={new URL(post.urlImage, baseUrl).toString()}
+    alt={post.title}
     width={800}
     height={400}
     className="w-full h-auto object-cover rounded-lg mb-6"
@@ -69,15 +69,15 @@ const PostDetails = async ({ params }: Props) => {
 
       {/* Content */}
       <p className="text-gray-700 leading-relaxed mb-6 whitespace-pre-line">
-        {post.Content || 'Không có nội dung.'}
+        {post.content || 'Không có nội dung.'}
       </p>
 
       {/* Tags */}
-      {post.Tags && (
+      {post.tags && (
         <div className="mt-6">
           <strong>Tags:</strong>
           <div className="flex flex-wrap mt-2 gap-2">
-            {post.Tags.split(',').map((tag, index) => (
+            {post.tags.split(',').map((tag, index) => (
               <span
                 key={index}
                 className="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm"

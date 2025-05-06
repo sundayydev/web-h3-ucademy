@@ -13,7 +13,9 @@ const Contact = () => {
   const [loading, setLoading] = useState(false);
   const [responseMessage, setResponseMessage] = useState('');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
@@ -22,15 +24,18 @@ const Contact = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/contact/send-email`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          senderEmail: formData.email,
-          subject: `Liên hệ từ ${formData.name}`,
-          message: formData.message,
-        }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/contact/send-email`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            senderEmail: formData.email,
+            subject: `Liên hệ từ ${formData.name}`,
+            message: formData.message,
+          }),
+        }
+      );
 
       if (response.ok) {
         setResponseMessage('✅ Gửi thành công! Chúng tôi sẽ liên hệ lại sớm.');
@@ -38,7 +43,7 @@ const Contact = () => {
       } else {
         setResponseMessage('❌ Lỗi khi gửi, vui lòng thử lại!');
       }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       setResponseMessage('❌ Không thể gửi email. Kiểm tra kết nối mạng.');
     } finally {
@@ -82,7 +87,9 @@ const Contact = () => {
           </h3>
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label className="block text-gray-700 dark:text-gray-300 font-semibold">Tên</label>
+              <label className="block text-gray-700 dark:text-gray-300 font-semibold">
+                Tên
+              </label>
               <input
                 type="text"
                 name="name"
@@ -95,7 +102,9 @@ const Contact = () => {
             </div>
 
             <div className="mb-4">
-              <label className="block text-gray-700 dark:text-gray-300 font-semibold">Email</label>
+              <label className="block text-gray-700 dark:text-gray-300 font-semibold">
+                Email
+              </label>
               <input
                 type="email"
                 name="email"
@@ -131,7 +140,9 @@ const Contact = () => {
             </button>
           </form>
 
-          {responseMessage && <p className="text-center mt-4 font-semibold">{responseMessage}</p>}
+          {responseMessage && (
+            <p className="text-center mt-4 font-semibold">{responseMessage}</p>
+          )}
         </div>
 
         {/* Google Maps */}
@@ -142,7 +153,6 @@ const Contact = () => {
           <iframe
             className="w-full h-64 rounded-lg shadow-lg"
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15674.479932513508!2d106.7588497!3d10.84036615!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752719273d6265%3A0xf0b3de0c32127b5f!2zV2luLkQgR2FtaW5nICYgQmlsbGlhcmRzIFRo4bunIMSQ4bupYw!5e0!3m2!1svi!2s!4v1740501966458!5m2!1svi!2s"
-           
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
           />

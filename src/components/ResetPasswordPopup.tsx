@@ -26,8 +26,11 @@ const ResetPasswordPopup: React.FC<ResetPasswordPopupProps> = ({
   onResetPassword,
 }) => {
   // Quản lý trạng thái form
-  const [formData, setFormData] = useState<ResetPasswordData>(resetPasswordData);
-  const [showNewPassword, setShowNewPassword] = useState<boolean>(initialShowNewPassword);
+  const [formData, setFormData] =
+    useState<ResetPasswordData>(resetPasswordData);
+  const [showNewPassword, setShowNewPassword] = useState<boolean>(
+    initialShowNewPassword
+  );
 
   // Đồng bộ resetPasswordData từ props
   useEffect(() => {
@@ -74,7 +77,9 @@ const ResetPasswordPopup: React.FC<ResetPasswordPopupProps> = ({
             }}
           />
         </div>
-        <h3 className="text-center text-lg font-bold text-gray-700 mb-3">Đặt Lại Mật Khẩu</h3>
+        <h3 className="text-center text-lg font-bold text-gray-700 mb-3">
+          Đặt Lại Mật Khẩu
+        </h3>
         <div className="relative mb-3">
           <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <input

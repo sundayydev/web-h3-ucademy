@@ -1,9 +1,14 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+
+import type { NextConfig } from 'next';
+
+const nextConfig: NextConfig = {
+  /* config options here */
   images: {
     remotePatterns: [
       {
         protocol: 'https',
+
         hostname: 'watermark.lovepik.com',
         port: '',
         pathname: '/**',
@@ -46,7 +51,13 @@ const nextConfig = {
       {
         protocol: 'http', // Hoặc 'https' tùy API
         hostname: 'localhost', // Nếu API chạy trên localhost
-        port: '5000', // Nếu API dùng port 5000
+        port: '5221', // Nếu API dùng port 5000
+        pathname: '/**',
+      },
+      {
+        hostname: 'images.dmca.com',
+        protocol: 'https',
+        port: '',
         pathname: '/**',
       },
     ],

@@ -60,10 +60,14 @@ const SidebarItem = ({ icon, text, path }: SidebarItemProps) => {
         ${isActive ? 'text-black font-semibold md:font-normal md:bg-gray-100 md:text-gray-900' : 'text-gray-600'} 
         md:hover:bg-gray-100`}
     >
-      <span className={`text-lg ${isActive ? 'text-pink-500 md:text-gray-900' : 'text-gray-600'}`}>
+      <span
+        className={`text-lg ${isActive ? 'text-pink-500 md:text-gray-900' : 'text-gray-600'}`}
+      >
         {icon}
       </span>
-      <span className={`md:ml-2 text-xs md:text-base ${isActive ? 'font-bold md:font-normal' : ''}`}>
+      <span
+        className={`md:ml-2 text-xs md:text-base ${isActive ? 'font-bold md:font-normal' : ''}`}
+      >
         {text}
       </span>
     </Link>

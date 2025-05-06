@@ -1,4 +1,4 @@
-import { LoginData, RegisterData, ResetPasswordData} from '@/types/auth';
+import { LoginData, RegisterData, ResetPasswordData } from '@/types/auth';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -34,10 +34,13 @@ export const login = async (data: LoginData) => {
 
 // Lấy thông tin người dùng
 export const getUserInfo = async (email: string) => {
-  const response = await fetch(`${API_URL}/api/auth/profile?email=${encodeURIComponent(email)}`, {
-    method: 'GET',
-    credentials: 'include',
-  });
+  const response = await fetch(
+    `${API_URL}/api/auth/profile?email=${encodeURIComponent(email)}`,
+    {
+      method: 'GET',
+      credentials: 'include',
+    }
+  );
   if (!response.ok) {
     const error = await response.json();
     throw new Error(error.message || 'Lấy thông tin người dùng thất bại');
@@ -77,10 +80,13 @@ export const resetPassword = async (data: ResetPasswordData) => {
 
 // Tìm kiếm
 export const search = async (query: string) => {
-  const response = await fetch(`${API_URL}/api/search/all?keyword=${encodeURIComponent(query)}`, {
-    method: 'GET',
-    credentials: 'include',
-  });
+  const response = await fetch(
+    `${API_URL}/api/search/all?keyword=${encodeURIComponent(query)}`,
+    {
+      method: 'GET',
+      credentials: 'include',
+    }
+  );
   if (!response.ok) {
     const error = await response.json();
     throw new Error(error.message || 'Tìm kiếm thất bại');

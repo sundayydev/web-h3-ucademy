@@ -20,9 +20,12 @@ export async function getPosts(): Promise<Post[]> {
 
 // Lấy bài viết theo ID
 export async function getPostById(id: string): Promise<Post> {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/post/${id}`, {
-    cache: 'no-store',
-  });
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/post/${id}`,
+    {
+      cache: 'no-store',
+    }
+  );
   if (!response.ok) {
     if (response.status === 404) {
       throw new Error('Bài viết không tồn tại');
@@ -53,13 +56,16 @@ export async function createPost(post: CreatePost): Promise<Post> {
 
 // Cập nhật bài viết
 export async function updatePost(id: string, post: UpdatePost): Promise<Post> {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/post/${id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(post),
-  });
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/post/${id}`,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(post),
+    }
+  );
   if (!response.ok) {
     if (response.status === 404) {
       throw new Error('Bài viết không tồn tại');
@@ -75,9 +81,12 @@ export async function updatePost(id: string, post: UpdatePost): Promise<Post> {
 
 // Xóa bài viết
 export async function deletePost(id: string): Promise<void> {
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/post/${id}`, {
-    method: 'DELETE',
-  });
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/api/post/${id}`,
+    {
+      method: 'DELETE',
+    }
+  );
   if (!response.ok) {
     if (response.status === 404) {
       throw new Error('Bài viết không tồn tại');

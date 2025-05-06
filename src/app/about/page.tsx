@@ -7,7 +7,8 @@ const teamMembers = [
   {
     name: 'Ngô Mạnh Hùng',
     role: 'Developer & CEO',
-    image: 'https://asd.mediacdn.vn/adt/tuyendungvccorp/lap-trinh-vien-la-gi_1b33bae8-ab72-4134-bb77-8d9df3b29def.jpg',
+    image:
+      'https://asd.mediacdn.vn/adt/tuyendungvccorp/lap-trinh-vien-la-gi_1b33bae8-ab72-4134-bb77-8d9df3b29def.jpg',
   },
   {
     name: 'Lê Hữu Duy Hoàng',
@@ -17,7 +18,8 @@ const teamMembers = [
   {
     name: 'Lê Hoài Huân',
     role: 'Developer',
-    image: 'https://cdni.iconscout.com/illustration/premium/thumb/man-coder-programming-on-computer-7771249-6200255.png?f=webp',
+    image:
+      'https://cdni.iconscout.com/illustration/premium/thumb/man-coder-programming-on-computer-7771249-6200255.png?f=webp',
   },
 ];
 
@@ -49,12 +51,13 @@ export default function About() {
               Chúng tôi là H3
             </p>
             <p className="md:text-xl sm:text-lg text-base mt-2 text-justify sm:px-2 dark:text-gray-300">
-              Chào mừng bạn đến với Web học lập trình H3 – nền tảng học lập trình hàng đầu dành cho
-              mọi đối tượng, từ người mới bắt đầu đến lập trình viên chuyên nghiệp. Sứ mệnh của
-              chúng tôi là cung cấp các khóa học chất lượng cao, dễ hiểu và thực tiễn, giúp người
-              học nhanh chóng nắm vững kiến thức lập trình và áp dụng vào thực tế. Với đội ngũ
-              giảng viên giàu kinh nghiệm, chúng tôi luôn cập nhật những công nghệ mới nhất để mang
-              lại trải nghiệm học tập tốt nhất.
+              Chào mừng bạn đến với Web học lập trình H3 – nền tảng học lập
+              trình hàng đầu dành cho mọi đối tượng, từ người mới bắt đầu đến
+              lập trình viên chuyên nghiệp. Sứ mệnh của chúng tôi là cung cấp
+              các khóa học chất lượng cao, dễ hiểu và thực tiễn, giúp người học
+              nhanh chóng nắm vững kiến thức lập trình và áp dụng vào thực tế.
+              Với đội ngũ giảng viên giàu kinh nghiệm, chúng tôi luôn cập nhật
+              những công nghệ mới nhất để mang lại trải nghiệm học tập tốt nhất.
             </p>
 
             <button

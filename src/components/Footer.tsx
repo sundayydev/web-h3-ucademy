@@ -11,12 +11,21 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
         {/* Cột 1: Logo + Thông tin liên hệ */}
         <div>
-            <h1 className="flex items-center space-x-3 mb-5">
+          <h1 className="flex items-center space-x-3 mb-5">
             {/* Logo */}
             <Link href="/" className="rounded-lg">
-              <Image className="rounded-lg" src={LogoH3} alt="Logo H3" width={40} height={40} />
+              <Image
+                className="rounded-lg"
+                src={LogoH3}
+                alt="Logo H3"
+                width={40}
+                height={40}
+              />
             </Link>
-            <Link href="/" className="font-semibold text-lg text-white hover:text-pink-200">
+            <Link
+              href="/"
+              className="font-semibold text-lg text-white hover:text-pink-200"
+            >
               Học Lập Trình Cùng H3
             </Link>
           </h1>
@@ -27,7 +36,8 @@ const Footer = () => {
             <strong>Email:</strong> contact@developer.edu.vn
           </p>
           <p className="text-sm">
-            <strong>Địa chỉ:</strong> Số 1, ngõ 41, Trần Duy Hưng, Cầu Giấy, Hà Nội
+            <strong>Địa chỉ:</strong> Số 1, ngõ 41, Trần Duy Hưng, Cầu Giấy, Hà
+            Nội
           </p>
           <div>
             <Image
@@ -153,8 +163,9 @@ const Footer = () => {
             <strong>Ngày thành lập:</strong> 01/03/2025
           </p>
           <p className="mt-2 text-sm">
-            Lĩnh vực hoạt động: Giáo dục, công nghệ - lập trình. Chúng tôi tập trung xây dựng và
-            phát triển các sản phẩm mang lại giá trị cho cộng đồng lập trình viên Việt Nam.
+            Lĩnh vực hoạt động: Giáo dục, công nghệ - lập trình. Chúng tôi tập
+            trung xây dựng và phát triển các sản phẩm mang lại giá trị cho cộng
+            đồng lập trình viên Việt Nam.
           </p>
 
           {/* Mạng xã hội */}

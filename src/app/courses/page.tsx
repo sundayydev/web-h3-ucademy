@@ -31,7 +31,7 @@ export default function CoursesPage() {
         setCourses(extendedData);
         setLoading(false);
       } catch (error) {
-        setError('Không thể tải danh sách khóa học: ' + error.message);
+        setError('Không thể tải danh sách khóa học: ' + (error as Error).message);
         setLoading(false);
       }
     };

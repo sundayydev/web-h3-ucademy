@@ -1,5 +1,3 @@
-// types/lesson.ts
-
 export interface Lesson {
   id: string;
   chapterId: string;
@@ -7,7 +5,7 @@ export interface Lesson {
   title: string;
   description: string;
   content: string;
-  videoUrls: string; // Single URL string based on provided data
+  videoUrls: string; // Single URL string
   duration: number; // Duration in seconds
   orderNumber: number;
   status: string; // e.g., "Pending"

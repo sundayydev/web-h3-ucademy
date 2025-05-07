@@ -351,7 +351,7 @@ const Header = () => {
                 <hr />
                 <DropdownMenuItem asChild>
                   <Link
-                    href="/profile"
+                    href="user/edit-profile"
                     className="block p-3 hover:bg-gray-100 rounded-lg cursor-pointer"
                   >
                     Trang cá nhân

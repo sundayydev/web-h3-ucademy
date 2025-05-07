@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import React from 'react';
 import Link from 'next/link';
@@ -24,14 +24,14 @@ const CourseCard = ({ course }: CourseCardProps) => {
   };
 
   return (
-    <Link href={`/course/${course.id}`} passHref>
+    <Link href={`/courses/${course.id}`} passHref>
       <div
         className="rounded-2xl shadow-lg overflow-hidden bg-white w-full max-w-[275px]
                    transform transition-transform duration-300 hover:scale-105 flex flex-col cursor-pointer"
       >
         <div className="flex-grow">
           <Image
-            src={getFullImageUrl(course.urlImage)} // Use course.image instead of course.title
+            src={getFullImageUrl(course.urlImage)}
             alt={course.title}
             width={275}
             height={160}

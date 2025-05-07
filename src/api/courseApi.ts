@@ -4,6 +4,17 @@ import { jwtDecode } from 'jwt-decode';
 
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/course`;
 
+export const getAuthToken = (): string => {
+  const token = localStorage.getItem('authToken');
+  if (!token) throw new Error('Không tìm thấy token');
+  return token;
+};
+
+export const getDecodedToken = (): any => {
+  const token = getAuthToken();
+  return jwtDecode(token);
+};
+
 export const getCourses = async (): Promise<any> => {
   try {
     const response = await fetch(API_URL, {
@@ -16,7 +27,10 @@ export const getCourses = async (): Promise<any> => {
     if (!response.ok) {
       throw new Error('Không thể lấy danh sách khóa học');
     }
-    return response.json();
+  
+    const data = await response.json();
+    console.log('API response:', data);
+    return data;
   } catch (error) {
     console.error('Lỗi khi lấy danh sách khóa học:', error);
     throw error;
@@ -42,108 +56,74 @@ export const getCourseById = async (courseId: string): Promise<any> => {
   }
 };
 
-export const createCourse = async (data: {
+// Tạo bài học mới
+export const createLesson = async (data: {
   title: string;
   description: string;
-  price: number;
-  contents: string;
+  videoUrl: string;
+  courseId: string;
 }): Promise<any> => {
-  const token = localStorage.getItem('authToken');
-  if (!token) {
-    throw new Error('Không tìm thấy token');
-  }
+  const token = getAuthToken();
+  const decodedToken = getDecodedToken();
+  const payload = { ...data, instructorId: decodedToken.id };
 
-  const decodedToken: any = jwtDecode(token);
-  const newData = {
-    title: data.title,
-    description: data.description,
-    price: data.price,
-    instructorId: decodedToken.id,
-    contents: data.contents.split('\n').filter((line: string) => line.trim() !== ''),
-  };
-  console.log('New Data:', newData);
+  const response = await fetch(API_URL, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  });
 
-  try {
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newData),
-    });
-    if (!response.ok) {
-      throw new Error('Không thể tạo khóa học');
-    }
-    return response.json();
-  } catch (error) {
-    console.error('Lỗi khi tạo khóa học:', error);
-    throw error;
-  }
+  if (!response.ok) throw new Error('Không thể tạo bài học mới');
+  return await response.json();
 };
 
-export const updateCourse = async (
+export const updateLesson = async (
   id: string,
   data: {
     title: string;
     description: string;
-    price: number;
-    contents: string;
+    videoUrl: string;
   }
 ): Promise<any> => {
-  const token = localStorage.getItem('authToken');
-  if (!token) {
-    throw new Error('Không tìm thấy token');
-  }
-
-  const decodedToken: any = jwtDecode(token);
-  const updatedData = {
-    title: data.title,
-    description: data.description,
-    price: data.price,
-    instructorId: decodedToken.id,
-    contents: data.contents.split('\n').filter((line: string) => line.trim() !== ''),
-  };
+  const token = getAuthToken();
 
   try {
     const response = await fetch(`${API_URL}/${id}`, {
       method: 'PUT',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(updatedData),
+      body: JSON.stringify(data),
     });
-    if (!response.ok) {
-      throw new Error('Không thể cập nhật khóa học');
-    }
-    return response.json();
+
+    if (!response.ok) throw new Error('Không thể cập nhật bài học');
+    return await response.json();
   } catch (error) {
-    console.error('Lỗi khi cập nhật khóa học:', error);
+    console.error('Lỗi khi cập nhật bài học:', error);
     throw error;
   }
 };
 
-export const deleteCourse = async (id: string): Promise<any> => {
-  const token = localStorage.getItem('authToken');
-  if (!token) {
-    throw new Error('Không tìm thấy token');
-  }
+export const deleteLesson = async (id: string): Promise<any> => {
+  const token = getAuthToken();
 
   try {
     const response = await fetch(`${API_URL}/${id}`, {
       method: 'DELETE',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
     });
-    if (!response.ok) {
-      throw new Error('Không thể xóa khóa học');
-    }
-    return response.json();
+
+    if (!response.ok) throw new Error('Không thể xóa bài học');
+    return await response.json();
   } catch (error) {
-    console.error('Lỗi khi xóa khóa học:', error);
+    console.error('Lỗi khi xóa bài học:', error);
     throw error;
   }
 };

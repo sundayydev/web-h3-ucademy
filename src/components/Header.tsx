@@ -97,7 +97,6 @@ const Header = () => {
       setSearchResults({ courses: [], posts: [] });
       return;
     }
-
     setIsSearching(true);
     try {
       const data = await search(query);

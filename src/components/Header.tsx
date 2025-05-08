@@ -3,7 +3,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-
 import LogoH3 from '@/public/images/logo-h3.png';
 import { FaSearch } from 'react-icons/fa';
 import {
@@ -24,7 +23,7 @@ import {
   forgotPassword,
   resetPassword,
   search,
-  getProfile,
+  getUserInfo,
   logout as logoutApi,
 } from '../api/authApi';
 import {
@@ -65,6 +64,31 @@ const Header = () => {
 
   const openPopup = (type: PopupType) => setPopup(type);
   const closePopup = () => setPopup(null);
+
+  // Remove this useEffect since it's now handled by useAuthCheck
+  /*
+    useEffect(() => {
+        const fetchUserData = async () => {
+            const storedUser = localStorage.getItem('user');
+            if (storedUser) {
+                try {
+                    const userData = JSON.parse(storedUser);
+                    const userResponse = await getUserInfo(userData.email);
+                    if (userResponse) {
+                        dispatch(setUser(userResponse));
+                        dispatch(setIsLoggedIn(true));
+                    }
+                } catch (error: unknown) {
+                    const errorMessage = error instanceof Error ? error.message : 'Lỗi lấy thông tin người dùng';
+                    console.error(errorMessage);
+                    localStorage.removeItem('user');
+                    dispatch(logout());
+                }
+            }
+        };
+        fetchUserData();
+    }, [dispatch]);
+    */
 
   // Rest of the Header component remains unchanged
   const handleSearch = useCallback(async (query: string) => {
@@ -113,7 +137,7 @@ const Header = () => {
   const handleLogin = async (data: LoginData) => {
     try {
       await login(data);
-      const userResponse = await getProfile();
+      const userResponse = await getUserInfo(data.email);
       if (userResponse) {
         dispatch(setUser(userResponse));
         dispatch(setIsLoggedIn(true));
@@ -131,7 +155,7 @@ const Header = () => {
   const handleRegister = async (data: RegisterData) => {
     try {
       await register(data);
-      const userResponse = await getProfile();
+      const userResponse = await getUserInfo(data.email);
       if (userResponse) {
         dispatch(setUser(userResponse));
         dispatch(setIsLoggedIn(true));
@@ -287,14 +311,12 @@ const Header = () => {
           {isLoggedIn && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-            
                 <button
                   className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-500 text-white font-bold shadow-xl hover:bg-blue-800"
                   aria-label="Menu người dùng"
                 >
-                  {user?.fullName?.charAt(0).toUpperCase() || 'U'}
-                  </button>
-                 
+                  {user?.fullname?.charAt(0).toUpperCase() || 'U'}
+                </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-80 p-2 shadow-lg rounded-2xl m-4">
                 <div className="flex items-center gap-3 p-3">
@@ -313,12 +335,12 @@ const Header = () => {
                       }}
                     />
                     <AvatarFallback className="bg-blue-500 text-white font-bold">
-                      {user?.fullName?.charAt(0).toUpperCase() || 'U'}
+                      {user?.fullname?.charAt(0).toUpperCase() || 'U'}
                     </AvatarFallback>
                   </Avatar>
                   <div>
                     <p className="font-semibold">
-                      {user?.fullName || 'Người dùng'}
+                      {user?.fullname || 'Người dùng'}
                     </p>
                     <p className="text-gray-500 text-sm break-words">
                       {user?.email || 'email'}
@@ -391,7 +413,7 @@ const Header = () => {
       <RegisterPopup
         isOpen={popup === 'register'}
         onClose={closePopup}
-        registerData={{ fullName: '', email: '', password: '', confirmPassword: '' }}
+        registerData={{ fullName: '', email: '', password: '' }}
         showPassword={false}
         onRegister={handleRegister}
         onOpenLogin={() => openPopup('login')}
@@ -409,7 +431,6 @@ const Header = () => {
           email: forgotEmail,
           resetCode: '',
           newPassword: '',
-          confirmNewPassword: ''
         }}
         showNewPassword={false}
         loading={false}

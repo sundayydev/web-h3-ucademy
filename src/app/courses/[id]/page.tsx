@@ -13,6 +13,7 @@ import { Lesson } from '@/types/lesson';
 
 const Details = () => {
   const { id } = useParams();
+  console.log('id:', id);
   const [expanded, setExpanded] = useState<number | null>(null);
   const [course, setCourse] = useState<Course | null>(null);
   const [chapters, setChapters] = useState<Chapter[]>([]);
@@ -22,37 +23,47 @@ const Details = () => {
 
   useEffect(() => {
     if (!id) return;
-  
-    const fetchCourseData = async () => {
-      setLoading(true);
+
+    const fetchCourse = async () => {
       try {
-        // Fetch course and chapters in parallel
-        const [courseData, chaptersData] = await Promise.all([
-          getCourseById(id as string),
-          getChaptersByCourseId(id as string),
-        ]);
-        setCourse(courseData);
-        setChapters(chaptersData || []);
-  
-        // Fetch lessons only after chapters are set
-        if (chaptersData && chaptersData.length > 0) {
-          const lessonMap: Record<string, Lesson[]> = {};
-          for (const chapter of chaptersData) {
-            const lessonData = await getLessonsByChapterId(chapter.id);
-            lessonMap[chapter.id] = lessonData;
-          }
-          setLessons(lessonMap);
-        }
+        const data = await getCourseById(id as string);
+        setCourse(data);
       } catch (error) {
         setError('Lỗi khi lấy thông tin khóa học');
-        console.error('Lỗi khi lấy dữ liệu:', error);
-      } finally {
-        setLoading(false);
+        console.error('Lỗi khi lấy thông tin khóa học:', error);
       }
     };
-  
-    fetchCourseData();
-  }, [id]);
+
+    const fetchChapters = async () => {
+      try {
+        const data = await getChaptersByCourseId(id as string);
+        console.log('Chapters response:', data);
+        setChapters(data || []);
+      } catch (error) {
+        console.error('Lỗi khi lấy danh sách chương:', error);
+      }
+    };
+
+    const fetchLessons = async () => {
+      try {
+        const lessonMap: Record<string, Lesson[]> = {};
+        for (const chapter of chapters) {
+          const lessonData = await getLessonsByChapterId(chapter.id);
+          lessonMap[chapter.id] = lessonData;
+        }
+        setLessons(lessonMap);
+      } catch (error) {
+        console.error('Lỗi khi lấy danh sách bài học:', error);
+      }
+    };
+
+    Promise.all([fetchCourse(), fetchChapters()])
+      .then(() => {
+        if (chapters.length > 0) fetchLessons();
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [id, chapters.length, chapters]);
 
   const toggleExpand = (index: number) => {
     setExpanded(expanded === index ? null : index);

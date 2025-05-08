@@ -1,4 +1,4 @@
-"use client"; // Đánh dấu là Client Component
+"use client";
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
@@ -25,10 +25,10 @@ const Details = () => {
   const [error, setError] = useState<string | null>(null);
   const [isRegistered, setIsRegistered] = useState(false);
   const [currentLessonId, setCurrentLessonId] = useState<string | null>(null);
-  const [isClient, setIsClient] = useState(false); // Trạng thái để kiểm soát hydration
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true); // Đánh dấu client đã sẵn sàng
+    setIsClient(true);
 
     if (!id) {
       setError('Không tìm thấy ID khóa học');
@@ -127,7 +127,6 @@ const Details = () => {
     }
   };
 
-  // Trì hoãn render cho đến khi client sẵn sàng
   if (!isClient) {
     return <div className="text-center pt-10">Đang tải...</div>;
   }

@@ -47,7 +47,6 @@ export default function RootLayout({
             </ClientPathCheck>
           </AuthCheckWrapper>
         </Providers>
-        {children}
       </body>
     </html>
   );

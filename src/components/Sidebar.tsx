@@ -1,8 +1,7 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { FaHome, FaEnvelope, FaNewspaper, FaInfoCircle } from 'react-icons/fa';
 
 const sidebarItems = [
@@ -48,14 +47,15 @@ interface SidebarItemProps {
 }
 
 const SidebarItem = ({ icon, text, path }: SidebarItemProps) => {
+
+  const router = useRouter();
   const pathname = usePathname();
   console.log('Current pathname:', pathname); // Debug
   const isActive = pathname === path;
 
   return (
-    <Link
-      href={path}
-      onClick={() => console.log(`Navigating to ${path}`)} // Debug
+    <a
+      onClick={() => router.push(path)} // Debug
       className={`flex items-center flex-col md:flex-row md:w-auto md:mb-2 p-2 m-2 md:rounded-lg 
         ${isActive ? 'text-black font-semibold md:font-normal md:bg-gray-100 md:text-gray-900' : 'text-gray-600'} 
         md:hover:bg-gray-100`}
@@ -70,7 +70,7 @@ const SidebarItem = ({ icon, text, path }: SidebarItemProps) => {
       >
         {text}
       </span>
-    </Link>
+    </a>
   );
 };
 

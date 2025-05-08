@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -17,7 +18,6 @@ import 'react-toastify/dist/ReactToastify.css';
 const Details = () => {
   const { id } = useParams();
   const router = useRouter();
-
   const [expanded, setExpanded] = useState<number | null>(null);
   const [course, setCourse] = useState<Course | null>(null);
   const [chapters, setChapters] = useState<Chapter[]>([]);
@@ -47,6 +47,7 @@ const Details = () => {
         ]);
 
         setCourse(courseData);
+        // console.log('Chapters response:', chaptersData); // Debugging log, comment out in production
         setChapters(chaptersData || []);
         setIsRegistered(enrollments?.length > 0);
       } catch (error) {
@@ -59,6 +60,7 @@ const Details = () => {
 
     fetchData();
   }, [id]);
+
 
   useEffect(() => {
     const fetchLessons = async () => {
@@ -84,6 +86,7 @@ const Details = () => {
       fetchLessons();
     }
   }, [chapters]);
+
 
   const toggleExpand = (index: number) => {
     setExpanded(expanded === index ? null : index);

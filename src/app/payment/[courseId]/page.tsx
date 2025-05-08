@@ -7,7 +7,7 @@ import { jwtDecode } from 'jwt-decode';
 import { createPayment, getAuthToken, CreateOrderDto } from '@/api/paymentApi';
 
 const getUserIdFromToken = () => {
-  const token = localStorage.getItem('authToken');
+  const token = localStorage.getItem('token');
   if (!token) return null;
   try {
     const decoded: any = jwtDecode(token);

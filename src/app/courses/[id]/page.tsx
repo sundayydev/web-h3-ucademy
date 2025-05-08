@@ -28,44 +28,33 @@ const Details = () => {
 
   useEffect(() => {
     if (!id) return;
-
-    const fetchCourse = async () => {
+  
+    const fetchCourseData = async () => {
+      setLoading(true);
       try {
-        const data = await getCourseById(id as string);
-        setCourse(data);
+        // Fetch course and chapters in parallel
+        const [courseData, chaptersData] = await Promise.all([
+          getCourseById(id as string),
+          getChaptersByCourseId(id as string),
+        ]);
+        setCourse(courseData);
+        setChapters(chaptersData || []);
+  
+        // Fetch lessons only after chapters are set
+        if (chaptersData && chaptersData.length > 0) {
+          const lessonMap: Record<string, Lesson[]> = {};
+          for (const chapter of chaptersData) {
+            const lessonData = await getLessonsByChapterId(chapter.id);
+            lessonMap[chapter.id] = lessonData;
+          }
+          setLessons(lessonMap);
+        }
       } catch (error) {
         setError('Lỗi khi lấy thông tin khóa học');
-        console.error('Lỗi khi lấy thông tin khóa học:', error);
-      }
-    };
-
-    const fetchChapters = async () => {
-      try {
-        const data = await getChaptersByCourseId(id as string);
-        console.log('Chapters response:', data);
-        setChapters(data || []);
-      } catch (error) {
-        console.error('Lỗi khi lấy danh sách chương:', error);
-      }
-    };
-
-    const fetchLessons = async () => {
-      try {
-        const lessonMap: Record<string, Lesson[]> = {};
-        for (const chapter of chapters) {
-          const lessonData = await getLessonsByChapterId(chapter.id);
-          lessonMap[chapter.id] = lessonData;
-        }
-        setLessons(lessonMap);
-      } catch (error) {
-        console.error('Lỗi khi lấy danh sách bài học:', error);
-      }
-    };
-
-    Promise.all([fetchCourse(), fetchChapters()])
-      .then(() => {
-        if (chapters.length > 0) fetchLessons();
+        console.error('Lỗi khi lấy dữ liệu:', error);
+      } finally {
         setLoading(false);
+<<<<<<< HEAD
       })
       .catch(() => setLoading(false));
   }, [id, chapters.length, chapters]);
@@ -114,6 +103,12 @@ const Details = () => {
     };
 
     fetchData();
+=======
+      }
+    };
+  
+    fetchCourseData();
+>>>>>>> 0fbd77c (fix token)
   }, [id]);
 
   const toggleExpand = (index: number) => {

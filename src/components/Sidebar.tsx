@@ -22,6 +22,13 @@ const sidebarItems = [
 ];
 
 const Sidebar = () => {
+  const pathname = usePathname();
+
+  // Không render Sidebar trên trang /login hoặc /register
+  if (['/login', '/register'].includes(pathname)) {
+    return null;
+  }
+
   return (
     <aside className="bg-white md:p-4 flex flex-col md:w-64 md:min-h-screen md:relative fixed bottom-0 w-full border-t md:border-0 z-10">
       <nav className="mt-1 flex md:flex-col justify-center md:justify-start">
@@ -47,15 +54,15 @@ interface SidebarItemProps {
 }
 
 const SidebarItem = ({ icon, text, path }: SidebarItemProps) => {
-
   const router = useRouter();
   const pathname = usePathname();
-  console.log('Current pathname:', pathname); // Debug
+  console.log('Current pathname:', pathname); // Debug (dòng 53)
+
   const isActive = pathname === path;
 
   return (
     <a
-      onClick={() => router.push(path)} // Debug
+      onClick={() => router.push(path)}
       className={`flex items-center flex-col md:flex-row md:w-auto md:mb-2 p-2 m-2 md:rounded-lg 
         ${isActive ? 'text-black font-semibold md:font-normal md:bg-gray-100 md:text-gray-900' : 'text-gray-600'} 
         md:hover:bg-gray-100`}

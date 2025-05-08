@@ -20,8 +20,14 @@ const ProfilePage = () => {
     fullName: '',
     email: '',
     birthDate: '',
-    password: '', // Ensure password is always a string
+    password: '',
     profileImage: null,
+    phone: '',
+    role: undefined,
+    ipAddress: '',
+    deviceName: '',
+    googleId: '',
+    isGoogleAccount: false,
   });
 
   useEffect(() => {
@@ -29,30 +35,30 @@ const ProfilePage = () => {
       try {
         setIsLoading(true);
         const token = localStorage.getItem('token');
-        console.log('Token trong handleEditSubmit:', token);
-  
 
         if (!token) {
-          console.error('Token không tồn tại trong localStorage');
           throw new Error('Không có token, vui lòng đăng nhập lại');
         }
-        
-        const userData = await getUserInfo();
-        console.log('User data received:', userData);
 
+        const userData = await getUserInfo();
         setUser(userData);
         setEditForm({
-          fullName: userData.fullName,
-          email: userData.email,
+          fullName: userData.fullName || '',
+          email: userData.email || '',
           birthDate: userData.birthDate ? new Date(userData.birthDate).toISOString().slice(0, 10) : '',
           password: '',
           profileImage: null,
+          phone: userData.phone || '',
+          role: userData.role || '',
+          ipAddress: userData.ipAddress || '',
+          deviceName: userData.deviceName || '',
+          googleId: userData.googleId || '',
+          isGoogleAccount: userData.isGoogleAccount || false,
         });
-        setIsLoading(false);
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Không thể tải dữ liệu người dùng';
-        console.error('Error fetching user data:', err);
         setError(message);
+      } finally {
         setIsLoading(false);
       }
     };
@@ -66,8 +72,6 @@ const ProfilePage = () => {
 
     try {
       const token = localStorage.getItem('token');
-      console.log('Token trong handleEditSubmit:', token);
-
       if (!token) {
         throw new Error('Không có token, vui lòng đăng nhập lại');
       }
@@ -82,16 +86,24 @@ const ProfilePage = () => {
       const dataToUpdate: UpdateUserDto = {
         fullName: editForm.fullName,
         email: editForm.email,
-        birthDate: editForm.birthDate ? new Date(editForm.birthDate).toISOString() : null,
+        birthDate: editForm.birthDate ? new Date(editForm.birthDate).toISOString() : undefined,
+        password: editForm.password?.trim() || undefined,
+        phone: editForm.phone,
+        role: editForm.role,
+        ipAddress: editForm.ipAddress,
+        deviceName: editForm.deviceName,
+        googleId: editForm.googleId,
+        isGoogleAccount: editForm.isGoogleAccount,
       };
 
-      if (editForm.password?.trim()) {
-        dataToUpdate.password = editForm.password;
+      const updatedUser = await updateUserInfo(userId, dataToUpdate);
+      let newProfileImage = user?.profileImage;
+
+      if (editForm.profileImage && editForm.profileImage instanceof File) {
+        const imageResponse = await uploadProfileImage(editForm.profileImage);
+        newProfileImage = imageResponse.profileImage;
       }
 
-      console.log('Data to update:', dataToUpdate);
-
-      const updatedUser = await updateUserInfo(userId, dataToUpdate);
       setUser((prev) => ({
         ...prev!,
         fullName: updatedUser.fullName,
@@ -99,21 +111,13 @@ const ProfilePage = () => {
         birthDate: updatedUser.birthDate,
         role: updatedUser.role || prev!.role,
         phone: updatedUser.phone || prev!.phone,
-        profileImage: updatedUser.profileImage || prev!.profileImage,
+        profileImage: newProfileImage || prev!.profileImage,
         createdAt: updatedUser.createdAt || prev!.createdAt,
         ipAddress: updatedUser.ipAddress || prev!.ipAddress,
         deviceName: updatedUser.deviceName || prev!.deviceName,
         googleId: updatedUser.googleId || prev!.googleId,
         isGoogleAccount: updatedUser.isGoogleAccount ?? prev!.isGoogleAccount,
       }));
-
-      if (editForm.profileImage && editForm.profileImage instanceof File) {
-        const imageResponse = await uploadProfileImage(editForm.profileImage);
-        setUser((prev) => ({
-          ...prev!,
-          profileImage: imageResponse.profileImage,
-        }));
-      }
 
       setIsEditModalOpen(false);
       toast.success('Cập nhật hồ sơ thành công!', {
@@ -126,11 +130,14 @@ const ProfilePage = () => {
       });
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Cập nhật hồ sơ thất bại';
-      console.error('Error updating user:', err);
       toast.error(message, {
         position: 'top-right',
         autoClose: 3000,
       });
+      if (message.includes('token')) {
+        localStorage.removeItem('token');
+        router.push('/login');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -203,22 +210,22 @@ const ProfilePage = () => {
           {/* Profile Image and Name */}
           <div className="flex flex-col items-center md:w-1/3">
             <div className="relative">
-            <div
-  className="w-32 h-32 md:w-40 md:h-40 relative rounded-full border-4 border-blue-500 cursor-pointer transition-transform hover:scale-105"
-  onClick={() => setIsImageModalOpen(true)}
->
-            <Image
-                src={
-                user.profileImage
-                    ? `${process.env.NEXT_PUBLIC_API_URL}${user.profileImage}`
-                    : '/default-post-image.jpg'
-                }
-                alt="Profile"
-                fill
-                className="rounded-full object-cover"
-                sizes="(min-width: 768px) 10rem, 8rem"
-            />
-            </div>
+              <div
+                className="w-32 h-32 md:w-40 md:h-40 relative rounded-full border-4 border-blue-500 cursor-pointer transition-transform hover:scale-105"
+                onClick={() => setIsImageModalOpen(true)}
+              >
+                <Image
+                  src={
+                    user.profileImage
+                      ? `${process.env.NEXT_PUBLIC_API_URL}${user.profileImage}`
+                      : '/default-post-image.jpg'
+                  }
+                  alt="Profile"
+                  fill
+                  className="rounded-full object-cover"
+                  sizes="(min-width: 768px) 10rem, 8rem"
+                />
+              </div>
               <label className="absolute bottom-2 right-2 bg-blue-500 text-white rounded-full p-2 cursor-pointer hover:bg-blue-600 transition-colors">
                 <FaCamera />
                 <input
@@ -279,17 +286,17 @@ const ProfilePage = () => {
       {isImageModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 p-4 z-50">
           <div className="relative max-w-md w-full">
-          <Image
-                src={
-                    user.profileImage
-                    ? `${process.env.NEXT_PUBLIC_API_URL}${user.profileImage}`
-                    : '/default-post-image.jpg'
-                }
-                alt="Profile Enlarged"
-                width={600} // bạn có thể điều chỉnh kích thước tùy theo thiết kế
-                height={600}
-                className="rounded-lg w-full object-cover"
-                />
+            <Image
+              src={
+                user.profileImage
+                  ? `${process.env.NEXT_PUBLIC_API_URL}${user.profileImage}`
+                  : '/default-post-image.jpg'
+              }
+              alt="Profile Enlarged"
+              width={600}
+              height={600}
+              className="rounded-lg w-full object-cover"
+            />
             <button
               className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-2 hover:bg-red-600 transition-colors"
               onClick={() => setIsImageModalOpen(false)}

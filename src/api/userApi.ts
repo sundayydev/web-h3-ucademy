@@ -40,7 +40,7 @@ export const getUserById = async (id: string): Promise<User> => {
     throw new Error('Không có token, vui lòng đăng nhập lại');
   }
 
-  const response = await fetch(`${API_URL}/api/users/${id}`, {
+  const response = await fetch(`${API_URL}/api/user/${id}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -67,7 +67,7 @@ export const createUser = async (userData: CreateUserDto): Promise<User> => {
     throw new Error('Không có token, vui lòng đăng nhập lại');
   }
 
-  const response = await fetch(`${API_URL}/api/users`, {
+  const response = await fetch(`${API_URL}/api/user`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -90,7 +90,7 @@ export const updateUserInfo = async (id: string, userData: UpdateUserDto): Promi
     throw new Error('Không có token, vui lòng đăng nhập lại');
   }
 
-  const response = await fetch(`${API_URL}/api/users/${id}`, {
+  const response = await fetch(`${API_URL}/api/user/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
@@ -116,7 +116,7 @@ export const uploadProfileImage = async (file: File): Promise<{ profileImage: st
   const formData = new FormData();
   formData.append('profileImage', file);
 
-  const response = await fetch(`${API_URL}/api/users/profile-image`, {
+  const response = await fetch(`${API_URL}/api/user/profile-image`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -138,7 +138,7 @@ export const deleteUser = async (id: string): Promise<void> => {
     throw new Error('Không có token, vui lòng đăng nhập lại');
   }
 
-  const response = await fetch(`${API_URL}/api/users/${id}`, {
+  const response = await fetch(`${API_URL}/api/user/${id}`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',

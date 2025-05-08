@@ -42,7 +42,7 @@ export default function RootLayout({
       >
         <Providers>
           <AuthCheckWrapper>
-            <ClientPathCheck excludePaths={['/admin', '/not-found']}>
+            <ClientPathCheck excludePaths={['/admin', '/not-found', '/login', '/register']}>
               <ClientLayout>{children}</ClientLayout>
             </ClientPathCheck>
           </AuthCheckWrapper>

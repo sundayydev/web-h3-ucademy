@@ -3,7 +3,7 @@
 import React, { ReactNode } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -22,6 +22,7 @@ import {
 
 import LogoH3 from '@/public/images/logo-h3.png';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { Button } from '../ui/button';
 
 // Danh sách sidebar items
 const sidebarItems = [
@@ -31,7 +32,7 @@ const sidebarItems = [
       {
         icon: <LayoutDashboard size={16} />,
         text: 'Dashboard',
-        path: '/admin/dashboard',
+        path: '/admin',
       },
       {
         icon: <DollarSign size={16} />,
@@ -103,8 +104,15 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   active,
   path,
 }) => {
+  const router = useRouter();
+
   return (
-    <Link href={path || '#'} className="block">
+    <a
+      onClick={() => {
+        router.push(path);
+      }}
+      className="block hover:cursor-pointer"
+    >
       <div
         className={`flex items-center p-2.5 rounded-lg transition-colors ${
           active
@@ -126,7 +134,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
           </span>
         )}
       </div>
-    </Link>
+    </a>
   );
 };
 interface AdminSidebarProps {

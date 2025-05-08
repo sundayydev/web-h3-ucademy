@@ -8,7 +8,12 @@ import { parse, isValid } from 'date-fns';
 import { getPosts } from '@/api/postApi';
 import type { Post } from '@/types/post';
 
-const topics = ['Front-end / Mobile apps', 'Back-end / Devops', 'UI / UX / Design', 'Others'];
+const topics = [
+  'Front-end / Mobile apps',
+  'Back-end / Devops',
+  'UI / UX / Design',
+  'Others',
+];
 
 export default function Post() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -31,7 +36,9 @@ export default function Post() {
   const formatDate = (date?: string) => {
     if (!date) return 'Không rõ thời gian';
     const parsedDate = parse(date, 'dd-MM-yyyy HH:mm:ss', new Date());
-    return isValid(parsedDate) ? parsedDate.toLocaleDateString('vi-VN') : 'Không rõ thời gian';
+    return isValid(parsedDate)
+      ? parsedDate.toLocaleDateString('vi-VN')
+      : 'Không rõ thời gian';
   };
 
   useEffect(() => {
@@ -58,7 +65,9 @@ export default function Post() {
           </div>
         </div>
 
-        <p className="font-bold text-3xl text-pink-600 dark:text-pink-400 mb-10">Bài viết nổi bật</p>
+        <p className="font-bold text-3xl text-pink-600 dark:text-pink-400 mb-10">
+          Bài viết nổi bật
+        </p>
 
         {loading ? (
           <p>Đang tải bài viết...</p>
@@ -72,7 +81,10 @@ export default function Post() {
                   console.log('Rendering post:', post);
                   console.log('Post created at:', post.createdAt);
                   // Tách chuỗi Tags thành mảng
-                  const tags = post.tags && post.tags.trim() !== '' ? post.tags.split(',').map(tag => tag.trim()) : [];
+                  const tags =
+                    post.tags && post.tags.trim() !== ''
+                      ? post.tags.split(',').map((tag) => tag.trim())
+                      : [];
                   return (
                     <Link key={post.id} href={`/post/${post.id}`} passHref>
                       <div className="p-4 border rounded-lg shadow-sm flex flex-col gap-4 cursor-pointer mt-5">
@@ -84,13 +96,19 @@ export default function Post() {
                             height={40}
                             className="w-10 h-10 rounded-full object-cover"
                           />
-                          <p className="font-semibold dark:text-gray-200">Ẩn danh</p>
+                          <p className="font-semibold dark:text-gray-200">
+                            Ẩn danh
+                          </p>
                         </div>
 
                         <div className="flex gap-4 items-start">
                           <div className="flex-1 flex flex-col gap-2">
-                            <h3 className="font-bold text-lg dark:text-gray-200">{post.title}</h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">{post.content}</p>
+                            <h3 className="font-bold text-lg dark:text-gray-200">
+                              {post.title}
+                            </h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
+                              {post.content}
+                            </p>
                           </div>
 
                           <Image
@@ -127,13 +145,17 @@ export default function Post() {
                   );
                 })
               ) : (
-                <p className="text-gray-500 dark:text-gray-400">Không có bài viết nào.</p>
+                <p className="text-gray-500 dark:text-gray-400">
+                  Không có bài viết nào.
+                </p>
               )}
             </div>
 
             <div className="hidden md:block ml-16">
               <div className="sticky top-20 w-72 bg-purple-600 text-white p-4 rounded-lg shadow-lg">
-                <h4 className="font-bold text-lg text-center">Khóa học HTML CSS PRO</h4>
+                <h4 className="font-bold text-lg text-center">
+                  Khóa học HTML CSS PRO
+                </h4>
                 <ul className="text-sm text-left space-y-2 mt-2">
                   <li>✔ Thực hành 8 dự án</li>
                   <li>✔ Hơn 300 bài tập thử thách</li>

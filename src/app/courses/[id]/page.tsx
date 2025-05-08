@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { Plus, Minus, BookOpen, CheckCircle, GraduationCap, Globe, PlayCircle, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getCourseById } from '@/api/courseApi';
@@ -177,7 +177,11 @@ const Details = () => {
   }
 
   if (error || !course) {
-    return <p className="text-center text-red-500 pt-10">{error || 'Không tìm thấy khóa học'}</p>;
+    return (
+      <p className="text-center text-red-500 pt-10">
+        {error || 'Không tìm thấy khóa học'}
+      </p>
+    );
   }
 
   const courseContents = course.contents

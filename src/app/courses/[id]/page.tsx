@@ -1,4 +1,4 @@
-"use client";
+"use client"; // Đánh dấu là Client Component
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
@@ -16,6 +16,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const Details = () => {
   const { id } = useParams();
+  const router = useRouter();
   const [expanded, setExpanded] = useState<number | null>(null);
   const [course, setCourse] = useState<Course | null>(null);
   const [chapters, setChapters] = useState<Chapter[]>([]);
@@ -27,38 +28,8 @@ const Details = () => {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    if (!id) return;
-  
-    const fetchCourseData = async () => {
-      setLoading(true);
-      try {
-        // Fetch course and chapters in parallel
-        const [courseData, chaptersData] = await Promise.all([
-          getCourseById(id as string),
-          getChaptersByCourseId(id as string),
-        ]);
-        setCourse(courseData);
-        setChapters(chaptersData || []);
-  
-        // Fetch lessons only after chapters are set
-        if (chaptersData && chaptersData.length > 0) {
-          const lessonMap: Record<string, Lesson[]> = {};
-          for (const chapter of chaptersData) {
-            const lessonData = await getLessonsByChapterId(chapter.id);
-            lessonMap[chapter.id] = lessonData;
-          }
-          setLessons(lessonMap);
-        }
-      } catch (error) {
-        setError('Lỗi khi lấy thông tin khóa học');
-        console.error('Lỗi khi lấy dữ liệu:', error);
-      } finally {
-        setLoading(false);
-<<<<<<< HEAD
-      })
-      .catch(() => setLoading(false));
-  }, [id, chapters.length, chapters]);
     setIsClient(true); // Đánh dấu client đã sẵn sàng
+
     if (!id) {
       setError('Không tìm thấy ID khóa học');
       setLoading(false);
@@ -73,6 +44,7 @@ const Details = () => {
           getChaptersByCourseId(id as string),
         ]);
         setCourse(courseData);
+        // console.log('Chapters response:', chaptersData); // Debugging log, comment out in production
         setChapters(chaptersData || []);
 
         if (chaptersData && chaptersData.length > 0) {
@@ -103,12 +75,6 @@ const Details = () => {
     };
 
     fetchData();
-=======
-      }
-    };
-  
-    fetchCourseData();
->>>>>>> 0fbd77c (fix token)
   }, [id]);
 
   const toggleExpand = (index: number) => {
@@ -297,7 +263,7 @@ const Details = () => {
               Trình độ cơ bản
             </li>
             <li className="flex items-center">
-              <Globe className="text-pink-500 mr-2" size={15} />
+              <Globe className=" ед-pink-500 mr-2" size={15} />
               Học mọi lúc, mọi nơi
             </li>
           </ul>

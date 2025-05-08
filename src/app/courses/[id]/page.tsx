@@ -1,4 +1,4 @@
-"use client";
+"use client"; // Đánh dấu là Client Component
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
@@ -25,97 +25,72 @@ const Details = () => {
   const [error, setError] = useState<string | null>(null);
   const [isRegistered, setIsRegistered] = useState(false);
   const [currentLessonId, setCurrentLessonId] = useState<string | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isClient, setIsClient] = useState(false); // Trạng thái để kiểm soát hydration
 
   useEffect(() => {
-    // Kiểm tra token
-    const token = localStorage.getItem('authToken');
-    setIsAuthenticated(!!token);
+    setIsClient(true); // Đánh dấu client đã sẵn sàng
 
-    if (!id) return;
-
-    const fetchCourse = async () => {
-      try {
-        const data = await getCourseById(id as string);
-        setCourse(data);
-      } catch (error) {
-        setError('Lỗi khi lấy thông tin khóa học');
-        console.error('Lỗi khi lấy thông tin khóa học:', error);
-      }
-    };
-
-    const fetchChapters = async () => {
-      try {
-        const data = await getChaptersByCourseId(id as string);
-        setChapters(data || []);
-      } catch (error) {
-        console.error('Lỗi khi lấy danh sách chương:', error);
-      }
-    };
-
-    const checkEnrollment = async () => {
-      if (!token) return;
-      try {
-        const enrollments = await getEnrollmentsByCourseId(id as string);
-        if (enrollments && enrollments.length > 0) {
-          setIsRegistered(true);
-        }
-      } catch (error) {
-        console.error('Lỗi khi kiểm tra enrollment:', error);
-      }
-    };
-
-    Promise.all([fetchCourse(), fetchChapters(), checkEnrollment()])
-        .finally(() => setLoading(false));
-  }, [id]);
-
-  useEffect(() => {
-    const fetchLessons = async () => {
-      try {
-        const lessonPromises = chapters.map(chapter => getLessonsByChapterId(chapter.id));
-        const lessonResults = await Promise.all(lessonPromises);
-        const lessonMap: Record<string, Lesson[]> = {};
-        chapters.forEach((chapter, index) => {
-          lessonMap[chapter.id] = lessonResults[index] || [];
-        });
-        setLessons(lessonMap);
-        const allLessons = Object.values(lessonMap).flat();
-        if (allLessons.length > 0) {
-          setCurrentLessonId(allLessons[0].id);
-        }
-      } catch (error) {
-        console.error('Lỗi khi lấy danh sách bài học:', error);
-      }
-    };
-
-    if (chapters.length > 0) {
-      fetchLessons();
+    if (!id) {
+      setError('Không tìm thấy ID khóa học');
+      setLoading(false);
+      return;
     }
-  }, [chapters]);
+
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const [courseData, chaptersData] = await Promise.all([
+          getCourseById(id as string),
+          getChaptersByCourseId(id as string),
+        ]);
+        setCourse(courseData);
+        setChapters(chaptersData || []);
+
+        if (chaptersData && chaptersData.length > 0) {
+          const lessonPromises = chaptersData.map(chapter => getLessonsByChapterId(chapter.id));
+          const lessonResults = await Promise.all(lessonPromises);
+          const lessonMap: Record<string, Lesson[]> = {};
+          chaptersData.forEach((chapter: Chapter, index: number) => {
+            lessonMap[chapter.id] = lessonResults[index] || [];
+          });
+          setLessons(lessonMap);
+
+          if (lessonResults.flat().length > 0) {
+            setCurrentLessonId(lessonResults.flat()[0].id);
+          }
+        }
+
+        const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
+        if (token) {
+          const enrollments = await getEnrollmentsByCourseId(id as string);
+          setIsRegistered(enrollments && enrollments.length > 0);
+        }
+      } catch (err) {
+        setError('Lỗi khi lấy thông tin khóa học');
+        console.error('Lỗi:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id]);
 
   const toggleExpand = (index: number) => {
     setExpanded(expanded === index ? null : index);
   };
 
-  const calculateTotalChapters = () => {
-    return chapters.length;
-  };
-
-  const calculateTotalLessons = () => {
-    return Object.values(lessons).reduce((sum, ls) => sum + ls.length, 0);
-  };
-
+  const calculateTotalChapters = () => chapters.length;
+  const calculateTotalLessons = () => Object.values(lessons).reduce((sum, ls) => sum + ls.length, 0);
   const calculateTotalDuration = () => {
-    const totalSeconds = Object.values(lessons).reduce((sum, ls) => {
-      return sum + ls.reduce((acc, lesson) => acc + (lesson.duration || 0), 0);
-    }, 0);
+    const totalSeconds = Object.values(lessons).reduce((sum, ls) => sum + ls.reduce((acc, lesson) => acc + (lesson.duration || 0), 0), 0);
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     return totalSeconds >= 3600 ? `${hours}h ${minutes}p` : `${minutes} phút`;
   };
 
   const handleRegisterClick = async () => {
-    if (!course) return;
+    if (!course || !isClient) return;
 
     const token = localStorage.getItem('authToken');
     if (!token) {
@@ -152,6 +127,11 @@ const Details = () => {
     }
   };
 
+  // Trì hoãn render cho đến khi client sẵn sàng
+  if (!isClient) {
+    return <div className="text-center pt-10">Đang tải...</div>;
+  }
+
   if (loading) {
     return <div className="text-center pt-10">Đang tải...</div>;
   }
@@ -160,9 +140,7 @@ const Details = () => {
     return <p className="text-center text-red-500 pt-10">{error || 'Không tìm thấy khóa học'}</p>;
   }
 
-  const courseContents = course.contents
-      ? course.contents.filter(line => line.trim() !== '')
-      : [];
+  const courseContents = course.contents ? course.contents.filter(line => line.trim() !== '') : [];
 
   return (
       <div className="max-w-7xl mx-auto p-4 bg-gray-50 grid grid-cols-1 lg:grid-cols-3 gap-8 mt-16">

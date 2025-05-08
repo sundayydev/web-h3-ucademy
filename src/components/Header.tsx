@@ -56,11 +56,10 @@ const Header = () => {
   });
   const [forgotEmail, setForgotEmail] = useState<string>('');
   const [isSearching, setIsSearching] = useState(false);
-  const [isClient, setIsClient] = useState(false); // Thêm để xử lý hydration
+  const [isClient, setIsClient] = useState(false);
 
   const openPopup = (type: PopupType) => setPopup(type);
   const closePopup = () => setPopup(null);
-
 
   const handleSearch = useCallback(async (query: string) => {
     setSearchQuery(query);
@@ -86,7 +85,7 @@ const Header = () => {
   }, []);
 
   useEffect(() => {
-    setIsClient(true); // Đánh dấu client sẵn sàng
+    setIsClient(true);
     const delayDebounceFn = setTimeout(() => {
       handleSearch(searchQuery);
     }, 500);
@@ -94,7 +93,6 @@ const Header = () => {
   }, [searchQuery, handleSearch]);
 
   useEffect(() => {
-    // Đồng bộ hóa dữ liệu từ localStorage và Redux khi client sẵn sàng
     if (isClient) {
       const storedUser = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
       if (storedUser) {
@@ -183,7 +181,6 @@ const Header = () => {
     }
   };
 
-  // Placeholder trên server để tránh hydration mismatch
   if (!isClient) {
     return (
         <header className="flex justify-between items-center px-6 py-3 bg-white shadow-md">
@@ -390,163 +387,8 @@ const Header = () => {
                 </DropdownMenu>
             )}
           </div>
-        )}
-      </div>
-
-      <div className="flex items-center justify-between space-x-4">
-        <div>
-          <Link href="/my-courses" className="p-3 hover:text-pink-600">
-            Khóa học của tôi
-          </Link>
         </div>
-        <div className="flex items-center space-x-4">
-          {!isLoggedIn && (
-            <>
-              <Button
-                variant="outline"
-                className="text-black font-semibold rounded-full"
-                onClick={() => openPopup('register')}
-              >
-                Đăng ký
-              </Button>
-              <Button
-                className="bg-gradient-to-r from-pink-500 to-pink-600 text-white px-4 py-2 rounded-full font-semibold"
-                onClick={() => openPopup('login')}
-              >
-                Đăng nhập
-              </Button>
-            </>
-          )}
-          {isLoggedIn && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button
-                  className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-500 text-white font-bold shadow-xl hover:bg-blue-800"
-                  aria-label="Menu người dùng"
-                >
-                  {user?.fullname?.charAt(0).toUpperCase() || 'U'}
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-80 p-2 shadow-lg rounded-2xl m-4">
-                <div className="flex items-center gap-3 p-3">
-                  <Avatar className="w-10 h-10">
-                    <Image
-                      src={user?.avatarUrl || LogoH3}
-                      alt="Ảnh đại diện người dùng"
-                      width={40}
-                      height={40}
-                      className="rounded-full"
-                      onError={(e) => {
-                        console.warn(
-                          'Lỗi: Không thể tải ảnh đại diện người dùng'
-                        );
-                        e.currentTarget.src = '/fallback.png';
-                      }}
-                    />
-                    <AvatarFallback className="bg-blue-500 text-white font-bold">
-                      {user?.fullname?.charAt(0).toUpperCase() || 'U'}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-semibold">
-                      {user?.fullname || 'Người dùng'}
-                    </p>
-                    <p className="text-gray-500 text-sm break-words">
-                      {user?.email || 'email'}
-                    </p>
-                  </div>
-                </div>
-                <hr />
-                <DropdownMenuItem asChild>
-                  <Link
-                    href="user/edit-profile"
-                    className="block p-3 hover:bg-gray-100 rounded-lg cursor-pointer"
-                  >
-                    Trang cá nhân
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link
-                    href="/write-blog"
-                    className="block p-3 hover:bg-gray-100 rounded-lg cursor-pointer"
-                  >
-                    Viết blog
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link
-                    href="/my-posts"
-                    className="block p-3 hover:bg-gray-100 rounded-lg cursor-pointer"
-                  >
-                    Bài viết của tôi
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link
-                    href="/saved-posts"
-                    className="block p-3 hover:bg-gray-100 HEARTrounded-lg cursor-pointer"
-                  >
-                    Bài viết đã lưu
-                  </Link>
-                </DropdownMenuItem>
-                <hr />
-                <DropdownMenuItem asChild>
-                  <Link
-                    href="/settings"
-                    className="block p-3 hover:bg-gray-100 rounded-lg cursor-pointer"
-                  >
-                    Cài đặt
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="p-3 hover:bg-gray-100 rounded-lg cursor-pointer text-red-500"
-                  onClick={handleLogout}
-                >
-                  Đăng xuất
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
 
-
-
-
-      <LoginPopup
-        isOpen={popup === 'login'}
-        onClose={closePopup}
-        loginData={{ email: '', password: '' }}
-        showPassword={false}
-        onLogin={handleLogin}
-        onOpenRegister={() => openPopup('register')}
-        onOpenForgotPassword={() => openPopup('forgotPassword')}
-      />
-      <RegisterPopup
-        isOpen={popup === 'register'}
-        onClose={closePopup}
-        registerData={{ fullName: '', email: '', password: '' }}
-        showPassword={false}
-        onRegister={handleRegister}
-        onOpenLogin={() => openPopup('login')}
-      />
-      <ForgotPasswordPopup
-        isOpen={popup === 'forgotPassword'}
-        onClose={closePopup}
-        forgotEmail={forgotEmail}
-        onForgotPassword={handleForgotPassword}
-      />
-      <ResetPasswordPopup
-        isOpen={popup === 'resetPassword'}
-        onClose={closePopup}
-        resetPasswordData={{
-          email: forgotEmail,
-          resetCode: '',
-          newPassword: '',
-        }}
-        showNewPassword={false}
-        loading={false}
-        onResetPassword={handleResetPassword}
-      />
-    </header>
         <LoginPopup
             isOpen={popup === 'login'}
             onClose={closePopup}
@@ -584,7 +426,6 @@ const Header = () => {
             onResetPassword={handleResetPassword}
         />
       </header>
-
   );
 };
 

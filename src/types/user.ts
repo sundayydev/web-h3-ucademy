@@ -27,11 +27,15 @@ export interface CreateUserDto {
 
 // DTO để cập nhật người dùng (dựa trên UpdateUserDto)
 export interface UpdateUserDto {
-
   fullName?: string;
   email?: string;
   password?: string;
   avatarUrl?: string;
   phone?: string | null;
   birthDate?: string | null;
+  role?: UserRole;
+  ipAddress?: string | null;
+  deviceName?: string | null;
+  googleId?: string | null;
+  isGoogleAccount?: boolean;
 }

@@ -19,24 +19,26 @@ import {
   SelectTrigger,
 } from '@radix-ui/react-select';
 import { Badge } from '@/components/ui/badge';
-import {
-  BookOpen,
-  ChevronLeft,
-  ChevronRight,
-  Download,
-  Eye,
-  Search,
-  Trash2,
-} from 'lucide-react';
+import { BookOpen, Download, Eye, Search, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { Course } from '@/types/course';
 import { getCoursePaginated, getCourses } from '@/api/courseApi';
-import { getInstructorById } from '@/api/instructorApi';
+import { getUserById } from '@/api/userApi';
+import { IUser } from '@/types/user';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
+import Pagination from '@/components/Pagination';
+import { useRouter } from 'next/navigation';
+
+interface CourseExtended extends Course {
+  instructor?: IUser;
+  category?: object;
+}
 
 const CoursesPage = () => {
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [instructors, setInstructors] = useState<{[key: string]: string}>({});
+  const router = useRouter();
+  const [courses, setCourses] = useState<CourseExtended[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [dateFilter, setDateFilter] = useState('all');
@@ -64,39 +66,45 @@ const CoursesPage = () => {
     });
   };
 
-  // Fetch instructor data when courses change
-  useEffect(() => {
-    const fetchInstructorData = async () => {
-      const instructorMap: {[key: string]: string} = {};
-      
-      for (const course of courses) {
-        if (course.instructorId && !instructorMap[course.instructorId]) {
-          try {
-            const instructor = await getInstructorById(course.instructorId);
-            instructorMap[course.instructorId] = instructor?.Name || 'Chưa có';
-          } catch (error) {
-            console.error('Error fetching instructor:', error);
-            instructorMap[course.instructorId] = 'Chưa có';
-          }
-        }
-      }
-      
-      setInstructors(instructorMap);
-    };
-
-    if (courses.length > 0) {
-      fetchInstructorData();
+  // Instructor data fetching
+  const fetchInstructorData = async (instructorId: string) => {
+    try {
+      const instructor = await getUserById(instructorId);
+      console.log('Instructor data:', instructor);
+      return instructor || 'Chưa có';
+    } catch (error) {
+      console.error('Error fetching instructor:', error);
+      return 'Chưa có';
     }
-  }, [courses]);
+  };
 
   useEffect(() => {
     const fetchCourses = async () => {
       try {
         const data = await getCoursePaginated(pageNumber, pageSize);
-        setCourses(data.data);
-        setTotalPages(Math.ceil(data.total / pageSize));
-        
 
+        // First set courses with placeholder instructor data
+        setCourses(
+          data.data.map((course: CourseExtended) => ({
+            ...course,
+            instructor: null,
+            category: '',
+          }))
+        );
+        setTotalPages(data.totalPages);
+
+        // Then fetch instructor data for each course
+        const coursesWithInstructors = await Promise.all(
+          data.data.map(async (course: CourseExtended) => ({
+            ...course,
+            instructor: await fetchInstructorData(course.instructorId),
+            category: '',
+          }))
+        );
+
+        setCourses(coursesWithInstructors);
+
+        setTotalPages(data.totalPages);
       } catch (error) {
         console.error('Error fetching courses:', error);
       }
@@ -110,10 +118,11 @@ const CoursesPage = () => {
       try {
         const data = await getCourses();
 
-        const freeCoursesCount = data.filter((course: Course) => course.price === 0).length;
+        const freeCoursesCount = data.filter(
+          (course: Course) => course.price === 0
+        ).length;
         setFreeCourses(freeCoursesCount);
         setTotalCourses(data.length);
-        
       } catch (error) {
         console.error('Error fetching all courses:', error);
       }
@@ -121,18 +130,6 @@ const CoursesPage = () => {
 
     fetchAllCourses();
   }, []);
-
-  const handlePreviousPage = () => {
-    if (pageNumber > 1) {
-      setPageNumber(pageNumber - 1);
-    }
-  };
-
-  const handleNextPage = () => {
-    if (pageNumber < totalPages) {
-      setPageNumber(pageNumber + 1);
-    }
-  };
 
   return (
     <div className="container mx-auto px-4 py-8 w-full">
@@ -252,7 +249,7 @@ const CoursesPage = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {courses.map((course: Course) => (
+              {courses.map((course: CourseExtended) => (
                 <TableRow key={course.id}>
                   <TableCell className="flex items-center gap-3">
                     <Image
@@ -278,9 +275,29 @@ const CoursesPage = () => {
                   </TableCell>
                   <TableCell
                     className="truncate max-w-[200px]"
-                    title={course.instructorId}
+                    title={course.instructorId || 'Chưa có'}
                   >
-                    {instructors[course.instructorId] || 'Đang tải...'}
+                    <div>
+                      {course.instructor ? (
+                        <div className="flex items-center gap-2">
+                          <Avatar className="h-8 w-8 shadow-sm">
+                            <AvatarImage src="https://github.com/shadcn.png" />
+                            <AvatarFallback>
+                              {course.instructor.fullName
+                                ?.split(' ')
+                                .map((word) => word.charAt(0))
+                                .join('')
+                                .toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="font-medium text-gray-900">
+                            {course.instructor.fullName}
+                          </span>
+                        </div>
+                      ) : (
+                        'Chưa có'
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell
                     className="truncate max-w-[150px]"
@@ -303,7 +320,12 @@ const CoursesPage = () => {
                     )}
                   </TableCell>
                   <TableCell className="truncate max-w-[100px]">
-                    Đang duyệt
+                    <Badge
+                      variant={'outline'}
+                      className="bg-orange-100 text-orange-800"
+                    >
+                      Đang duyệt
+                    </Badge>
                   </TableCell>
                   <TableCell className="truncate max-w-[150px]">
                     {formatDate(course.createdAt)}
@@ -313,6 +335,10 @@ const CoursesPage = () => {
                       variant="ghost"
                       size="icon"
                       className="text-blue-500 hover:text-blue-700 hover:bg-blue-100"
+                      onClick={() => {
+                        router.push(`/admin/courses/${course.id}`);
+                        console.log('Course ID:', course.id);
+                      }}
                     >
                       <Eye className="h-6 w-6" />
                     </Button>
@@ -328,27 +354,11 @@ const CoursesPage = () => {
               ))}
             </TableBody>
           </Table>
-          <div className="flex items-center justify-between mt-4">
-            <Button
-              variant="outline"
-              onClick={handlePreviousPage}
-              disabled={pageNumber === 1}
-            >
-              <ChevronLeft className="h-4 w-4 mr-2" />
-              Trang trước
-            </Button>
-            <span>
-              Trang {pageNumber} / {totalPages}
-            </span>
-            <Button
-              variant="outline"
-              onClick={handleNextPage}
-              disabled={pageNumber === totalPages}
-            >
-              Trang sau
-              <ChevronRight className="h-4 w-4 ml-2" />
-            </Button>
-          </div>
+          <Pagination
+            currentPage={pageNumber}
+            totalPages={totalPages}
+            onPageChange={(page) => setPageNumber(page)}
+          />
         </CardContent>
       </Card>
     </div>

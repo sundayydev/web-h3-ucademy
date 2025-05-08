@@ -52,7 +52,9 @@ export const getLessonById = async (id: string): Promise<any> => {
 };
 
 // Lấy bài học theo ID chương
-export const getLessonsByChapterId = async (chapterId: string): Promise<Lesson[]> => {
+export const getLessonsByChapterId = async (
+  chapterId: string
+): Promise<Lesson[]> => {
   try {
     const response = await fetch(`${API_URL}/chapter/${chapterId}`, {
       method: 'GET',
@@ -64,7 +66,9 @@ export const getLessonsByChapterId = async (chapterId: string): Promise<Lesson[]
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+      throw new Error(
+        `HTTP error! status: ${response.status}, message: ${errorText}`
+      );
     }
 
     const data = await response.json();
@@ -84,7 +88,8 @@ export const getLessonsByCourseId = async (courseId: string): Promise<any> => {
       cache: 'no-store',
     });
 
-    if (!response.ok) throw new Error('Không thể lấy danh sách bài học của khóa học');
+    if (!response.ok)
+      throw new Error('Không thể lấy danh sách bài học của khóa học');
 
     const data = await response.json();
     if (!Array.isArray(data)) throw new Error('Dữ liệu bài học không hợp lệ');
@@ -177,4 +182,3 @@ export const deleteLesson = async (id: string): Promise<any> => {
     throw error;
   }
 };
-

@@ -1,7 +1,7 @@
 export interface Review {
-  id: number; // int in backend
+  id: string; // int in backend
   courseId: string; // Assumed Guid linking to Course
   rating: number;
   userId: string; // Assumed field
-  // Add other fields from ReviewDto
+  status: string; // Assumed field
 }

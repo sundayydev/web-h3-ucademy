@@ -1,9 +1,14 @@
-"use client";
+'use client';
 
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 import { createEnrollment } from '@/api/enrollmentApi';
 import { useRouter } from 'next/navigation';
@@ -31,7 +36,7 @@ const PaymentModal = ({ courseId, price, onClose }: PaymentModalProps) => {
       await createEnrollment(courseId);
 
       toast.success('Thanh toán và đăng ký khóa học thành công!', {
-        position: "top-right",
+        position: 'top-right',
         autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
@@ -44,7 +49,7 @@ const PaymentModal = ({ courseId, price, onClose }: PaymentModalProps) => {
     } catch (error) {
       console.error('Lỗi khi thanh toán:', error);
       toast.error('Lỗi khi thanh toán. Vui lòng thử lại!', {
-        position: "top-right",
+        position: 'top-right',
         autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
@@ -70,11 +75,17 @@ const PaymentModal = ({ courseId, price, onClose }: PaymentModalProps) => {
           </Button>
         </DialogHeader>
         <div className="py-4">
-          <p className="text-lg font-semibold">Số tiền: {price.toLocaleString()} VND</p>
-          <p className="text-gray-600 mt-2">Vui lòng xác nhận thanh toán để đăng ký khóa học.</p>
+          <p className="text-lg font-semibold">
+            Số tiền: {price.toLocaleString()} VND
+          </p>
+          <p className="text-gray-600 mt-2">
+            Vui lòng xác nhận thanh toán để đăng ký khóa học.
+          </p>
           {/* Giả lập phương thức thanh toán */}
           <div className="mt-4">
-            <p className="text-sm font-medium">Phương thức thanh toán: Thẻ tín dụng (giả lập)</p>
+            <p className="text-sm font-medium">
+              Phương thức thanh toán: Thẻ tín dụng (giả lập)
+            </p>
           </div>
         </div>
         <div className="flex justify-end space-x-2">

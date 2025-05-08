@@ -59,7 +59,8 @@ export const getPaymentsByUserId = async (userId: string) => {
       },
     });
 
-    if (!response.ok) throw new Error('Không thể lấy thanh toán của người dùng');
+    if (!response.ok)
+      throw new Error('Không thể lấy thanh toán của người dùng');
     return await response.json();
   } catch (error) {
     console.error('Lỗi khi lấy thanh toán của người dùng:', error);
@@ -100,7 +101,8 @@ export const updatePaymentStatus = async (id: string, status: string) => {
       body: JSON.stringify({ status }),
     });
 
-    if (!response.ok) throw new Error('Không thể cập nhật trạng thái thanh toán');
+    if (!response.ok)
+      throw new Error('Không thể cập nhật trạng thái thanh toán');
     return await response.json();
   } catch (error) {
     console.error('Lỗi khi cập nhật trạng thái thanh toán:', error);
@@ -150,7 +152,10 @@ export const getPaymentStatistics = async (period: string = 'month') => {
 };
 
 // Xuất báo cáo thanh toán
-export const exportPaymentReport = async (startDate: string, endDate: string) => {
+export const exportPaymentReport = async (
+  startDate: string,
+  endDate: string
+) => {
   const token = getAuthToken();
   try {
     const queryParams = new URLSearchParams({ startDate, endDate }).toString();
@@ -164,7 +169,7 @@ export const exportPaymentReport = async (startDate: string, endDate: string) =>
 
     if (!response.ok) throw new Error('Không thể xuất báo cáo thanh toán');
     const blob = await response.blob(); // Đọc blob dữ liệu
-    return blob;  // Trả về dữ liệu blob của báo cáo thanh toán
+    return blob; // Trả về dữ liệu blob của báo cáo thanh toán
   } catch (error) {
     console.error('Lỗi khi xuất báo cáo thanh toán:', error);
     throw error;

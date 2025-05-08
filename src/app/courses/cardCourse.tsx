@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React from 'react';
 import Link from 'next/link';
@@ -39,9 +39,13 @@ const CourseCard = ({ course }: CourseCardProps) => {
           />
         </div>
         <div className="bg-gray-50 text-black p-4">
-          <h3 className="font-semibold text-base line-clamp-2">{course.title}</h3>
+          <h3 className="font-semibold text-base line-clamp-2">
+            {course.title}
+          </h3>
           <p className="text-orange-500 font-semibold mt-2">
-            {course.price === 0 ? 'Miễn phí' : `${course.price.toLocaleString('vi-VN')} VND`}
+            {course.price === 0
+              ? 'Miễn phí'
+              : `${course.price.toLocaleString('vi-VN')} VND`}
           </p>
           <div className="flex justify-between mt-3 text-xs text-gray-500">
             <div className="flex items-center gap-1">

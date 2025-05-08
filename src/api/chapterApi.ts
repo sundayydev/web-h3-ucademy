@@ -1,17 +1,24 @@
 import { Chapter } from '@/types/chapter';
 
-export const getChaptersByCourseId = async (courseId: string): Promise<Chapter[]> => {
+export const getChaptersByCourseId = async (
+  courseId: string
+): Promise<Chapter[]> => {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chapter/course/${courseId}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/api/chapter/course/${courseId}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+      throw new Error(
+        `HTTP error! status: ${response.status}, message: ${errorText}`
+      );
     }
 
     const data = await response.json();

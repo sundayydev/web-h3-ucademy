@@ -1,8 +1,17 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { Plus, Minus, BookOpen, CheckCircle, GraduationCap, Globe, PlayCircle, Clock } from 'lucide-react';
+import {
+  Plus,
+  Minus,
+  BookOpen,
+  CheckCircle,
+  GraduationCap,
+  Globe,
+  PlayCircle,
+  Clock,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getCourseById } from '@/api/courseApi';
 import { getChaptersByCourseId } from '@/api/chapterApi';
@@ -91,11 +100,15 @@ const Details = () => {
   }
 
   if (error || !course) {
-    return <p className="text-center text-red-500 pt-10">{error || 'Không tìm thấy khóa học'}</p>;
+    return (
+      <p className="text-center text-red-500 pt-10">
+        {error || 'Không tìm thấy khóa học'}
+      </p>
+    );
   }
 
   const courseContents = course.contents
-    ? course.contents.filter(line => line.trim() !== '')
+    ? course.contents.filter((line) => line.trim() !== '')
     : [];
 
   return (
@@ -105,7 +118,9 @@ const Details = () => {
         <p className="text-gray-600 mt-2">{course.description}</p>
 
         <div className="mt-6">
-          <h2 className="text-xl font-bold mb-4 text-gray-800">Bạn sẽ học được gì?</h2>
+          <h2 className="text-xl font-bold mb-4 text-gray-800">
+            Bạn sẽ học được gì?
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
             {courseContents.length > 0 ? (
               courseContents.map((content: string, index: number) => (
@@ -120,23 +135,31 @@ const Details = () => {
           </div>
         </div>
 
-        <h2 className="text-xl font-bold mt-8 text-gray-800">Nội dung khóa học</h2>
+        <h2 className="text-xl font-bold mt-8 text-gray-800">
+          Nội dung khóa học
+        </h2>
         <div className="mt-4 text-gray-600 flex items-center space-x-6">
           <div className="flex items-center space-x-2">
             <BookOpen size={18} className="text-pink-500" />
             <span className="text-sm font-medium">
-              Tổng số <strong className="text-black">{calculateTotalChapters()}</strong> chương
+              Tổng số{' '}
+              <strong className="text-black">{calculateTotalChapters()}</strong>{' '}
+              chương
             </span>
           </div>
           <div className="flex items-center space-x-2">
             <BookOpen size={18} className="text-pink-500" />
             <span className="text-sm font-medium">
-              Tổng số <strong className="text-black">{calculateTotalLessons()}</strong> bài học
+              Tổng số{' '}
+              <strong className="text-black">{calculateTotalLessons()}</strong>{' '}
+              bài học
             </span>
           </div>
           <div className="flex items-center space-x-2">
             <Clock size={18} className="text-blue-500" />
-            <span className="text-sm font-medium">{calculateTotalDuration()}</span>
+            <span className="text-sm font-medium">
+              {calculateTotalDuration()}
+            </span>
           </div>
         </div>
 
@@ -163,12 +186,17 @@ const Details = () => {
                     {chapterLessons.length > 0 ? (
                       <ul className="mt-2 space-y-2">
                         {chapterLessons.map((lesson: Lesson) => (
-                          <li key={lesson.id} className="flex items-center justify-between">
+                          <li
+                            key={lesson.id}
+                            className="flex items-center justify-between"
+                          >
                             <span className="text-sm">{lesson.title}</span>
                             {lesson.videoUrls && (
                               <button
                                 className="ml-2 flex items-center space-x-2 text-blue-500"
-                                onClick={() => window.open(lesson.videoUrls, '_blank')}
+                                onClick={() =>
+                                  window.open(lesson.videoUrls, '_blank')
+                                }
                               >
                                 <PlayCircle size={16} />
                                 <span>Xem video</span>
@@ -178,7 +206,9 @@ const Details = () => {
                         ))}
                       </ul>
                     ) : (
-                      <p className="text-gray-500 text-sm mt-2">Chưa có bài học</p>
+                      <p className="text-gray-500 text-sm mt-2">
+                        Chưa có bài học
+                      </p>
                     )}
                   </div>
                 )}
@@ -200,15 +230,26 @@ const Details = () => {
         <ul className="mt-4 space-y-2 text-gray-600">
           <li className="flex items-center">
             <BookOpen className="text-pink-500 mr-2" size={15} />
-            Tổng số <strong className="text-gray-600 mr-1 ml-1 font-semibold">{calculateTotalChapters()}</strong> chương
+            Tổng số{' '}
+            <strong className="text-gray-600 mr-1 ml-1 font-semibold">
+              {calculateTotalChapters()}
+            </strong>{' '}
+            chương
           </li>
           <li className="flex items-center">
             <BookOpen className="text-pink-500 mr-2" size={15} />
-            Tổng số <strong className="text-gray-600 mr-1 ml-1 font-semibold">{calculateTotalLessons()}</strong> bài học
+            Tổng số{' '}
+            <strong className="text-gray-600 mr-1 ml-1 font-semibold">
+              {calculateTotalLessons()}
+            </strong>{' '}
+            bài học
           </li>
           <li className="flex items-center">
             <Clock className="text-pink-500 mr-2" size={15} />
-            Thời lượng: <strong className="text-gray-600 mr-1 ml-1 font-semibold">{calculateTotalDuration()}</strong>
+            Thời lượng:{' '}
+            <strong className="text-gray-600 mr-1 ml-1 font-semibold">
+              {calculateTotalDuration()}
+            </strong>
           </li>
           <li className="flex items-center">
             <GraduationCap className="text-pink-500 mr-2" size={15} />

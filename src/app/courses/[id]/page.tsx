@@ -1,86 +1,97 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import {
-  Plus,
-  Minus,
-  BookOpen,
-  CheckCircle,
-  GraduationCap,
-  Globe,
-  PlayCircle,
-  Clock,
-} from 'lucide-react';
+import { Plus, Minus, BookOpen, CheckCircle, GraduationCap, Globe, PlayCircle, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { getCourseById } from '@/api/courseApi';
 import { getChaptersByCourseId } from '@/api/chapterApi';
 import { getLessonsByChapterId } from '@/api/lessonApi';
+import { getEnrollmentsByCourseId, createEnrollment } from '@/api/enrollmentApi';
 import { Course } from '@/types/course';
 import { Chapter } from '@/types/chapter';
 import { Lesson } from '@/types/lesson';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Details = () => {
   const { id } = useParams();
-  console.log('id:', id);
+  const router = useRouter();
   const [expanded, setExpanded] = useState<number | null>(null);
   const [course, setCourse] = useState<Course | null>(null);
   const [chapters, setChapters] = useState<Chapter[]>([]);
   const [lessons, setLessons] = useState<Record<string, Lesson[]>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isRegistered, setIsRegistered] = useState(false);
+  const [currentLessonId, setCurrentLessonId] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    if (!id) return;
+    const token = localStorage.getItem('authToken');
+    setIsAuthenticated(!!token);
 
-    const fetchCourse = async () => {
+    if (!id) {
+      setError('Không tìm thấy ID khóa học');
+      setLoading(false);
+      return;
+    }
+
+    const fetchData = async () => {
       try {
-        const data = await getCourseById(id as string);
-        setCourse(data);
+        const [courseData, chaptersData, enrollments] = await Promise.all([
+          getCourseById(id as string),
+          getChaptersByCourseId(id as string),
+          token ? getEnrollmentsByCourseId(id as string) : Promise.resolve([]),
+        ]);
+
+        setCourse(courseData);
+        // console.log('Chapters response:', chaptersData); // Debugging log, comment out in production
+        setChapters(chaptersData || []);
+        setIsRegistered(enrollments?.length > 0);
       } catch (error) {
-        setError('Lỗi khi lấy thông tin khóa học');
-        console.error('Lỗi khi lấy thông tin khóa học:', error);
+        setError('Lỗi khi lấy dữ liệu khóa học');
+        console.error('Lỗi khi lấy dữ liệu:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
-    const fetchChapters = async () => {
-      try {
-        const data = await getChaptersByCourseId(id as string);
-        console.log('Chapters response:', data);
-        setChapters(data || []);
-      } catch (error) {
-        console.error('Lỗi khi lấy danh sách chương:', error);
-      }
-    };
+    fetchData();
+  }, [id]);
 
+
+  useEffect(() => {
     const fetchLessons = async () => {
       try {
+        const lessonPromises = chapters.map(chapter => getLessonsByChapterId(chapter.id));
+        const lessonResults = await Promise.all(lessonPromises);
         const lessonMap: Record<string, Lesson[]> = {};
-        for (const chapter of chapters) {
-          const lessonData = await getLessonsByChapterId(chapter.id);
-          lessonMap[chapter.id] = lessonData;
-        }
+        chapters.forEach((chapter, index) => {
+          lessonMap[chapter.id] = lessonResults[index] || [];
+        });
         setLessons(lessonMap);
+
+        const allLessons = Object.values(lessonMap).flat();
+        if (allLessons.length > 0) {
+          setCurrentLessonId(allLessons[0].id);
+        }
       } catch (error) {
         console.error('Lỗi khi lấy danh sách bài học:', error);
       }
     };
 
-    Promise.all([fetchCourse(), fetchChapters()])
-      .then(() => {
-        if (chapters.length > 0) fetchLessons();
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, [id, chapters.length, chapters]);
+    if (chapters.length > 0) {
+      fetchLessons();
+    }
+  }, [chapters]);
+
 
   const toggleExpand = (index: number) => {
     setExpanded(expanded === index ? null : index);
   };
 
-  const calculateTotalChapters = () => {
-    return chapters.length;
-  };
+  const calculateTotalChapters = () => chapters.length;
 
   const calculateTotalLessons = () => {
     return Object.values(lessons).reduce((sum, ls) => sum + ls.length, 0);
@@ -92,7 +103,36 @@ const Details = () => {
     }, 0);
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
-    return totalSeconds >= 3600 ? `${hours}h ${minutes}p` : `${minutes} phút`;
+    return totalSeconds >= 3600 ? `${hours}h ${minutes}m` : `${minutes} phút`;
+  };
+
+  const handleRegisterClick = async () => {
+    if (!course) return;
+
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      toast.error('Vui lòng đăng nhập để đăng ký khóa học!');
+      router.push('/login');
+      return;
+    }
+
+    try {
+      if (!isRegistered) {
+        // Nếu chưa đăng ký, luôn chuyển hướng đến trang thanh toán
+        router.push(`/payment/${course.id}`);
+      } else {
+        // Nếu đã đăng ký, chuyển hướng đến trang học
+        if (currentLessonId) {
+          router.push(`/learning/${currentLessonId}`);
+        } else {
+          toast.error('Không tìm thấy bài học để vào học!');
+        }
+      }
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'Đăng ký thất bại, vui lòng thử lại!';
+      toast.error(errorMessage);
+      console.error('Lỗi khi xử lý đăng ký:', error);
+    }
   };
 
   if (loading) {
@@ -206,9 +246,7 @@ const Details = () => {
                         ))}
                       </ul>
                     ) : (
-                      <p className="text-gray-500 text-sm mt-2">
-                        Chưa có bài học
-                      </p>
+                      <p className="text-gray-500 text-sm mt-2">Chưa có bài học</p>
                     )}
                   </div>
                 )}
@@ -223,8 +261,12 @@ const Details = () => {
           {course.price ? `${course.price.toLocaleString()} VND` : 'Miễn phí'}
         </div>
 
-        <Button className="w-64 text-white rounded-2xl shadow-lg bg-pink-600 hover:bg-pink-700">
-          Đăng ký học
+        <Button
+          className="w-64 text-white rounded-2xl shadow-lg bg-pink-600 hover:bg-pink-700"
+          onClick={handleRegisterClick}
+          disabled={!currentLessonId && isRegistered}
+        >
+          {isRegistered ? 'Vào học' : 'Đăng ký học'}
         </Button>
 
         <ul className="mt-4 space-y-2 text-gray-600">

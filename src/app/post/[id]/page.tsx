@@ -21,13 +21,14 @@ const PostDetails = async ({ params }: Props) => {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
   const formatDate = (date?: string) => {
     const d = new Date(date || '');
-    return isNaN(d.getTime()) ? 'Không rõ thời gian' : d.toLocaleDateString('vi-VN');
+    return isNaN(d.getTime())
+      ? 'Không rõ thời gian'
+      : d.toLocaleDateString('vi-VN');
   };
 
   return (
     <div className="w-full py-20 bg-gray-50 dark:bg-gray-900 px-6 md:px-20">
       <h1 className="text-3xl font-bold mb-6">{post.title}</h1>
-
       {/* Author */}
       <div className="flex items-center space-x-4 mb-6">
         <Image
@@ -42,36 +43,34 @@ const PostDetails = async ({ params }: Props) => {
           className="rounded-full object-cover w-12 h-12"
         />
         <div>
-          <p className="font-semibold">{post.user?.fullName || 'Tác giả ẩn danh'}</p>
+          <p className="font-semibold">
+            {post.user?.fullName || 'Tác giả ẩn danh'}
+          </p>
           <p className="text-gray-500 text-sm">{formatDate(post.createdAt)}</p>
         </div>
       </div>
-
       {/* Main Image */}
       {post.urlImage ? (
-  <Image
-    src={new URL(post.urlImage, baseUrl).toString()}
-    alt={post.title}
-    width={800}
-    height={400}
-    className="w-full h-auto object-cover rounded-lg mb-6"
-  />
-) : (
-  <Image
-    src="https://via.placeholder.com/800x400"
-    alt="Placeholder"
-    width={800}
-    height={400}
-    className="w-full h-auto object-cover rounded-lg mb-6"
-  />
-)}
-
-
+        <Image
+          src={new URL(post.urlImage, baseUrl).toString()}
+          alt={post.title}
+          width={800}
+          height={400}
+          className="w-full h-auto object-cover rounded-lg mb-6"
+        />
+      ) : (
+        <Image
+          src="https://via.placeholder.com/800x400"
+          alt="Placeholder"
+          width={800}
+          height={400}
+          className="w-full h-auto object-cover rounded-lg mb-6"
+        />
+      )}
       {/* Content */}
       <p className="text-gray-700 leading-relaxed mb-6 whitespace-pre-line">
         {post.content || 'Không có nội dung.'}
       </p>
-
       {/* Tags */}
       {post.tags && (
         <div className="mt-6">
@@ -88,9 +87,7 @@ const PostDetails = async ({ params }: Props) => {
           </div>
         </div>
       )}
-
       Comments
-    
     </div>
   );
 };

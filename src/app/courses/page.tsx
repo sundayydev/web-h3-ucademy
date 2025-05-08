@@ -31,7 +31,9 @@ export default function CoursesPage() {
         setCourses(extendedData);
         setLoading(false);
       } catch (error) {
-        setError('Không thể tải danh sách khóa học: ' + (error as Error).message);
+        setError(
+          'Không thể tải danh sách khóa học: ' + (error as Error).message
+        );
         setLoading(false);
       }
     };
@@ -47,11 +49,10 @@ export default function CoursesPage() {
   }
 
   return (
-      <div className="flex flex-wrap justify-start gap-4">
-        {courses.map((course) => (
-          <CourseCard key={course.id} course={course} />
-        ))}
-      </div>
-    
+    <div className="flex flex-wrap justify-start gap-4">
+      {courses.map((course) => (
+        <CourseCard key={course.id} course={course} />
+      ))}
+    </div>
   );
 }

@@ -361,4 +361,5 @@ const DetailsPageCourse = () => {
   );
 };
 
-export default DetailsPageCourse;
+// export default DetailsPageCourse;
+

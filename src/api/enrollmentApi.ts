@@ -53,7 +53,9 @@ export const getEnrollmentByUserId = async (): Promise<any> => {
 };
 
 // Lấy enrollment theo ID khóa học
-export const getEnrollmentsByCourseId = async (courseId: string): Promise<any> => {
+export const getEnrollmentsByCourseId = async (
+  courseId: string
+): Promise<any> => {
   try {
     const res = await fetch(`${API_URL}/course/${courseId}`, {
       method: 'GET',
@@ -85,7 +87,7 @@ export const createEnrollment = async (courseId: string): Promise<any> => {
     const res = await fetch(API_URL, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(payload),
@@ -106,7 +108,7 @@ export const updateEnrollment = async (id: string, data: any): Promise<any> => {
     const res = await fetch(`${API_URL}/${id}`, {
       method: 'PUT',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
@@ -127,7 +129,7 @@ export const deleteEnrollment = async (id: string): Promise<any> => {
     const res = await fetch(`${API_URL}/${id}`, {
       method: 'DELETE',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
     });

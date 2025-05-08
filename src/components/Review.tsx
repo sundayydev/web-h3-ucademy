@@ -1,11 +1,15 @@
-"use client";
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { Send } from 'lucide-react';
 import { FaStar } from 'react-icons/fa';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea'; // Ensure this path is correct or update it to the actual location of the Textarea component.
-import { getReviewsByCourseId, createReview, updateReview } from '@/api/reviewApi';
+import {
+  getReviewsByCourseId,
+  createReview,
+  updateReview,
+} from '@/api/reviewApi';
 import { jwtDecode } from 'jwt-decode';
 import { toast } from 'react-toastify';
 
@@ -35,7 +39,9 @@ const Review = ({ courseId }: { courseId: string }) => {
           const authToken = localStorage.getItem('authToken');
           if (authToken) {
             const decodedToken: { id: string } = jwtDecode(authToken);
-            const userReview = response.find(review => review.userId === decodedToken.id);
+            const userReview = response.find(
+              (review) => review.userId === decodedToken.id
+            );
             if (userReview) {
               setExistingReview(userReview);
               setRating(userReview.rating);
@@ -64,7 +70,7 @@ const Review = ({ courseId }: { courseId: string }) => {
   const handleSubmitReview = async () => {
     if (!rating || !reviewText) {
       toast.error('Bạn cần chọn sao và nhập bình luận!', {
-        position: "top-right",
+        position: 'top-right',
         autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
@@ -79,7 +85,7 @@ const Review = ({ courseId }: { courseId: string }) => {
 
     if (!authToken || authToken.split('.').length !== 3) {
       toast.error('Token không hợp lệ hoặc thiếu cấu trúc', {
-        position: "top-right",
+        position: 'top-right',
         autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
@@ -100,11 +106,13 @@ const Review = ({ courseId }: { courseId: string }) => {
       let response: Review;
       if (existingReview) {
         response = await updateReview(existingReview.id, reviewData);
-        setReviews(prevReviews =>
-          prevReviews.map(review => (review.id === existingReview.id ? response : review))
+        setReviews((prevReviews) =>
+          prevReviews.map((review) =>
+            review.id === existingReview.id ? response : review
+          )
         );
         toast.success('Đánh giá đã được cập nhật thành công!', {
-          position: "top-right",
+          position: 'top-right',
           autoClose: 3000,
           hideProgressBar: false,
           closeOnClick: true,
@@ -113,10 +121,10 @@ const Review = ({ courseId }: { courseId: string }) => {
         });
       } else {
         response = await createReview(reviewData);
-        setReviews(prevReviews => [...prevReviews, response]);
+        setReviews((prevReviews) => [...prevReviews, response]);
         setExistingReview(response);
         toast.success('Đánh giá đã được gửi thành công!', {
-          position: "top-right",
+          position: 'top-right',
           autoClose: 3000,
           hideProgressBar: false,
           closeOnClick: true,
@@ -127,7 +135,7 @@ const Review = ({ courseId }: { courseId: string }) => {
     } catch (error) {
       console.error('Lỗi khi gửi đánh giá:', error);
       toast.error('Lỗi khi gửi đánh giá.', {
-        position: "top-right",
+        position: 'top-right',
         autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
@@ -156,7 +164,9 @@ const Review = ({ courseId }: { courseId: string }) => {
 
       <Textarea
         value={reviewText}
-        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setReviewText(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+          setReviewText(e.target.value)
+        }
         placeholder="Viết đánh giá của bạn..."
         className="w-full mb-4"
         rows={4}
@@ -167,13 +177,19 @@ const Review = ({ courseId }: { courseId: string }) => {
         className={`flex items-center ${existingReview ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-500 hover:bg-blue-600'}`}
         disabled={isSubmitting}
       >
-        {isSubmitting ? 'Đang gửi...' : existingReview ? 'Cập nhật đánh giá' : 'Gửi đánh giá'}
+        {isSubmitting
+          ? 'Đang gửi...'
+          : existingReview
+            ? 'Cập nhật đánh giá'
+            : 'Gửi đánh giá'}
         <Send className="ml-2" size={18} />
       </Button>
 
       {reviews.length > 0 && (
         <div className="mt-6">
-          <h4 className="font-semibold text-lg mb-4">Đánh giá của người khác:</h4>
+          <h4 className="font-semibold text-lg mb-4">
+            Đánh giá của người khác:
+          </h4>
           <div className="space-y-4">
             {reviews.map((review: Review, idx: number) => (
               <div key={idx} className="border-b pb-4">
@@ -182,7 +198,11 @@ const Review = ({ courseId }: { courseId: string }) => {
                     <FaStar
                       key={star}
                       size={16}
-                      className={review.rating >= star ? 'text-yellow-500' : 'text-gray-300'}
+                      className={
+                        review.rating >= star
+                          ? 'text-yellow-500'
+                          : 'text-gray-300'
+                      }
                     />
                   ))}
                 </div>

@@ -17,7 +17,9 @@ const getUserId = (): string => {
 };
 
 // Public: Lấy review theo course
-export const getPublicReviewsByCourseId = async (courseId: string): Promise<any> => {
+export const getPublicReviewsByCourseId = async (
+  courseId: string
+): Promise<any> => {
   try {
     const res = await fetch(`${API_URL}/course/${courseId}`, {
       method: 'GET',
@@ -33,7 +35,9 @@ export const getPublicReviewsByCourseId = async (courseId: string): Promise<any>
 };
 
 // Public: Lấy số lượng enrollments theo course
-export const getPublicEnrollmentsByCourseId = async (courseId: string): Promise<any> => {
+export const getPublicEnrollmentsByCourseId = async (
+  courseId: string
+): Promise<any> => {
   try {
     const res = await fetch(`${ENROLLMENT_URL}/course/${courseId}`, {
       method: 'GET',
@@ -55,7 +59,7 @@ export const getReviewsByCourseId = async (courseId: string): Promise<any> => {
     const res = await fetch(`${API_URL}/course/${courseId}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
       cache: 'no-store',
@@ -82,7 +86,7 @@ export const createReview = async (reviewData: any): Promise<any> => {
     const res = await fetch(API_URL, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
@@ -96,7 +100,10 @@ export const createReview = async (reviewData: any): Promise<any> => {
 };
 
 // Cập nhật review
-export const updateReview = async (reviewId: string, reviewData: any): Promise<any> => {
+export const updateReview = async (
+  reviewId: string,
+  reviewData: any
+): Promise<any> => {
   const token = getAuthToken();
   const userId = getUserId();
 
@@ -109,7 +116,7 @@ export const updateReview = async (reviewId: string, reviewData: any): Promise<a
     const res = await fetch(`${API_URL}/${reviewId}`, {
       method: 'PUT',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
@@ -131,7 +138,7 @@ export const deleteReview = async (reviewId: string): Promise<any> => {
     const res = await fetch(`${API_URL}/${reviewId}`, {
       method: 'DELETE',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ userId }),

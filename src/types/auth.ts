@@ -1,8 +1,7 @@
 export interface User {
-  fullName: string;
+  fullname: string;
   email: string;
   avatarUrl?: string;
-  token?: string;
 }
 
 export interface LoginData {
@@ -14,14 +13,12 @@ export interface RegisterData {
   fullName: string;
   email: string;
   password: string;
-  confirmPassword: string;
 }
 
 export interface ResetPasswordData {
   email: string;
   resetCode: string;
   newPassword: string;
-  confirmNewPassword: string;
 }
 
 export interface SearchResult {

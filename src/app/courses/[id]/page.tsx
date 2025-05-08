@@ -16,7 +16,6 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const Details = () => {
   const { id } = useParams();
-  const router = useRouter();
   const [expanded, setExpanded] = useState<number | null>(null);
   const [course, setCourse] = useState<Course | null>(null);
   const [chapters, setChapters] = useState<Chapter[]>([]);
@@ -28,8 +27,49 @@ const Details = () => {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true);
+    if (!id) return;
 
+    const fetchCourse = async () => {
+      try {
+        const data = await getCourseById(id as string);
+        setCourse(data);
+      } catch (error) {
+        setError('Lỗi khi lấy thông tin khóa học');
+        console.error('Lỗi khi lấy thông tin khóa học:', error);
+      }
+    };
+
+    const fetchChapters = async () => {
+      try {
+        const data = await getChaptersByCourseId(id as string);
+        console.log('Chapters response:', data);
+        setChapters(data || []);
+      } catch (error) {
+        console.error('Lỗi khi lấy danh sách chương:', error);
+      }
+    };
+
+    const fetchLessons = async () => {
+      try {
+        const lessonMap: Record<string, Lesson[]> = {};
+        for (const chapter of chapters) {
+          const lessonData = await getLessonsByChapterId(chapter.id);
+          lessonMap[chapter.id] = lessonData;
+        }
+        setLessons(lessonMap);
+      } catch (error) {
+        console.error('Lỗi khi lấy danh sách bài học:', error);
+      }
+    };
+
+    Promise.all([fetchCourse(), fetchChapters()])
+      .then(() => {
+        if (chapters.length > 0) fetchLessons();
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [id, chapters.length, chapters]);
+    setIsClient(true); // Đánh dấu client đã sẵn sàng
     if (!id) {
       setError('Không tìm thấy ID khóa học');
       setLoading(false);

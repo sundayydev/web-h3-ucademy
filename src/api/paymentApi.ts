@@ -5,7 +5,7 @@ const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/Payment`;
 
 // Hàm lấy token từ localStorage
 export const getAuthToken = (): string => {
-  const token = localStorage.getItem('authToken');
+  const token = localStorage.getItem('token');
   if (!token) throw new Error('Không tìm thấy token');
   return token;
 };

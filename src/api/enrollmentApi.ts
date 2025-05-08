@@ -4,7 +4,7 @@ import { jwtDecode } from 'jwt-decode';
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/enrollment`;
 
 const getAuthToken = (): string => {
-  const token = localStorage.getItem('authToken');
+  const token = localStorage.getItem('token');
   if (!token) throw new Error('Không tìm thấy token');
   return token;
 };
@@ -78,7 +78,7 @@ export const createEnrollment = async (courseId: string): Promise<any> => {
   const payload = {
     UserId: userId,
     CourseId: courseId,
-    Status: 'InProgress',
+    Status: 'Enrolled',
   };
 
   try {

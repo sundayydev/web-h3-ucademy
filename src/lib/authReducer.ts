@@ -10,7 +10,7 @@ interface AuthState {
 const initialState: AuthState = {
   user: null,
   isLoggedIn: false,
-  token: null,
+  token: typeof window !== 'undefined' ? localStorage.getItem('token') : null,
 };
 
 const authSlice = createSlice({
@@ -19,17 +19,30 @@ const authSlice = createSlice({
   reducers: {
     setUser(state, action) {
       state.user = action.payload;
+      state.isLoggedIn = true;
+      if (action.payload?.token) {
+        state.token = action.payload.token;
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('token', action.payload.token);
+        }
+      }
     },
     setIsLoggedIn(state, action) {
       state.isLoggedIn = action.payload;
     },
     setToken(state, action) {
       state.token = action.payload;
+      if (action.payload && typeof window !== 'undefined') {
+        localStorage.setItem('token', action.payload);
+      }
     },
     logout(state) {
       state.user = null;
       state.isLoggedIn = false;
       state.token = null;
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('token');
+      }
     },
   },
 });

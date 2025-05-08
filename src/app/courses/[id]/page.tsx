@@ -25,7 +25,7 @@ const Details = () => {
   const [error, setError] = useState<string | null>(null);
   const [isRegistered, setIsRegistered] = useState(false);
   const [currentLessonId, setCurrentLessonId] = useState<string | null>(null);
-  const [isClient, setIsClient] = useState(false); // Trạng thái để kiểm soát hydration
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     setIsClient(true); // Đánh dấu client đã sẵn sàng
@@ -44,6 +44,7 @@ const Details = () => {
           getChaptersByCourseId(id as string),
         ]);
         setCourse(courseData);
+        // console.log('Chapters response:', chaptersData); // Debugging log, comment out in production
         setChapters(chaptersData || []);
 
         if (chaptersData && chaptersData.length > 0) {
@@ -127,7 +128,6 @@ const Details = () => {
     }
   };
 
-  // Trì hoãn render cho đến khi client sẵn sàng
   if (!isClient) {
     return <div className="text-center pt-10">Đang tải...</div>;
   }
@@ -263,7 +263,7 @@ const Details = () => {
               Trình độ cơ bản
             </li>
             <li className="flex items-center">
-              <Globe className="text-pink-500 mr-2" size={15} />
+              <Globe className=" ед-pink-500 mr-2" size={15} />
               Học mọi lúc, mọi nơi
             </li>
           </ul>

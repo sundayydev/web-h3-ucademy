@@ -23,7 +23,7 @@ import {
   forgotPassword,
   resetPassword,
   search,
-  getUserInfo,
+  getProfile,
   logout as logoutApi,
 } from '../api/authApi';
 import {
@@ -119,7 +119,7 @@ const Header = () => {
   const handleLogin = async (data: LoginData) => {
     try {
       await login(data);
-      const userResponse = await getUserInfo(data.email);
+      const userResponse = await getProfile();
       if (userResponse) {
         dispatch(setUser(userResponse));
         dispatch(setIsLoggedIn(true));
@@ -137,7 +137,7 @@ const Header = () => {
   const handleRegister = async (data: RegisterData) => {
     try {
       await register(data);
-      const userResponse = await getUserInfo(data.email);
+      const userResponse = await getProfile();
       if (userResponse) {
         dispatch(setUser(userResponse));
         dispatch(setIsLoggedIn(true));
@@ -183,7 +183,7 @@ const Header = () => {
 
   if (!isClient) {
     return (
-        <header className="flex justify-between items-center px-6 py-3 bg-white shadow-md">
+        <header className="flex justify-between items-center px-6 py-3 bg-white shadow-md relative">
           <div className="w-38 h-38" />
           <div className="w-full md:max-w-lg mx-4 h-10" />
           <div className="w-20 h-10" />
